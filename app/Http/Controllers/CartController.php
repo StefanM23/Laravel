@@ -34,14 +34,15 @@ class CartController extends Controller
             'comments' => 'required',
         ]);
 
-        $email = env('MAIL_TO_ADDRESS');
-        $subject = 'Subject';
+        $subject = 'Order';
         $data = ['value' => 'exemple'];
 
-        Mail::send('mail', $data, function ($message) use ($email, $subject) {
-            $message->from('exemple@demo.com', 'name');
-            $message->to($email)->subject($subject);
+        Mail::send('mail', $data, function ($message) {
+            $message->from('exemple@demo.com');
+            $message->to('stefan@yahoo.com')->subject('Order');
+            dd($message);
         });
+        
         return view('mail');
     }
 }
