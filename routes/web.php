@@ -16,9 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('welcome', function () {
     return view('welcome');
 });
-Route::get('index','ProductsController@index');
-Route::post('index', 'ProductsController@index');
-Route::post('cart','CartController@store');
-Route::get('cart','CartController@index');
-Route::delete('cart','CartController@destroy');
+Route::get('index', 'IndexController@index');
+Route::post('index', 'IndexController@store');
 
+
+Route::get('cart', 'CartController@index');
+Route::post('cart', 'CartController@store');
+Route::delete('cart/{cartID}', 'CartController@destroy');

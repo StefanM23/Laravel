@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-    <form action="cart" method="POST">
+    <form action="cart/{cartID}" method="POST">
         @csrf
         @foreach ($products as $product)
             <div class="full-section">
@@ -22,8 +22,9 @@
             </div>
         @endforeach
     </form>
-    <form action="cart" method="post"></form>
-        <input type="text" name="name" placeholder="Name" ><br>
+    <form action="cart" method="POST">
+        @csrf
+        <input type="text" name="name" placeholder="Name" value="{{ old('name') }}"><br>
         <textarea name="contacts" style="resize: none;"  cols="30" rows="2" placeholder="Contact details" ></textarea><br>
         <textarea name="comments" style="resize: none;" cols="30" rows="4" placeholder="Comments"></textarea><br>
         <a href="{{ url('/index') }}">Go to Index</a>
