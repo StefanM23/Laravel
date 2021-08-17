@@ -6,7 +6,7 @@
         @foreach ($products as $product)
             <div class="full-section">
                 <div class="info-section">
-                    <img src="{{ $product->image }}" alt="image">
+                    <img src="{{ $product->image }}" alt="{{ __('image') }}">
                 </div>
                 <div class="info-section">
                     <ul>
@@ -16,12 +16,12 @@
                     </ul>
                 </div>
                 <div class="info-section">
-                    <button type="submit" name="id" value="{{ $product->id }}">Add</button>
+                    <button type="submit" name="id" value="{{ $product->id }}">{{ __('Add') }}Add</button>
                 </div>
             </div>
         @endforeach
     </form>
     <div class="cart-section">
-        <a href="{{ url('/cart') }}">Go to cart</a>
+        <a href="{{ url('/cart') }}">{{ __('Go to cart') }}</a>
     </div>
 @endsection

@@ -19,7 +19,7 @@ Route::get('welcome', function () {
 Route::get('index', 'IndexController@index');
 Route::post('index', 'IndexController@store');
 
-
 Route::get('cart', 'CartController@index');
 Route::post('cart', 'CartController@store');
 Route::delete('cart/{cartID}', 'CartController@destroy');
+
