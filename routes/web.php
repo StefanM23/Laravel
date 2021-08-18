@@ -27,6 +27,6 @@ Route::delete('cart/{cartID}', 'CartController@destroy');
 Auth::routes();
 
 Route::get('products', 'ProductsController@index')->name('products');
-Route::get('products/{productID}/edit', 'ProductsController@edit')->name('products.edit');
+Route::get('product/{productID}/edit', 'ProductsController@edit')->name('product.edit');
 Route::delete('products/{productsID}', 'ProductsController@destroy')->name('products.delete');
 

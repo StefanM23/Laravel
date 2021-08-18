@@ -27,7 +27,7 @@
                                 </ul>
                             </div>
                             <div class="info-section">
-                                <a href="products/{{ $product['id'] }}/edit" name='edit'>Edit</a>
+                                <a href="product/{{ $product['id'] }}/edit" name='edit'>Edit</a>
                             </div>
                             <form action="{{ url('products', ['id' => $product->id]) }}" method="POST">
                                 @csrf
