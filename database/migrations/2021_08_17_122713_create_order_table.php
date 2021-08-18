@@ -19,7 +19,6 @@ class CreateOrderTable extends Migration
             $table->timestamps();
             $table->foreign('orders_id')->references('id')->on('orders')->onDelete('set null');
             $table->foreign('products_id')->references('id')->on('products')->onDelete('set null');
-            
         });
     }
 

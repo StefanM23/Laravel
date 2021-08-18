@@ -1,5 +1,9 @@
 @extends('layout')
 
+@section('header')
+    <title>{{ __('Cart Page') }}</title>
+@endsection
+
 @section('content')
     <form action="cart/{cartID}" method="POST">
         @csrf

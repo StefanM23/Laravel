@@ -1,13 +1,13 @@
 {
-    "Index Page" : "Sommaire",
-    "image" : "image",
-    "Go to cart" : "Aller au panier",
-    "Add" : "Ajouter",
-    "Remove" : "Supprimer",
-    "Cart Page" : "Panier",
-    "Name" : "Nom",
-    "Contact details" : "Détails du contact",
-    "Comments" : "Commentaires",
-    "Go to Index" : "Aller à index",
-    "Checkout" : "Vérifier"    
+    "Index Page": "Sommaire",
+    "image": "image",
+    "Go to cart": "Aller au panier",
+    "Add": "Ajouter",
+    "Remove": "Supprimer",
+    "Cart Page": "Panier",
+    "Name": "Nom",
+    "Contact details": "Détails du contact",
+    "Comments": "Commentaires",
+    "Go to Index": "Aller à index",
+    "Checkout": "Vérifier"
 }

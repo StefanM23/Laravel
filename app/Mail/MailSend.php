@@ -29,11 +29,10 @@ class MailSend extends Mailable
      */
     public function build()
     {
-       
         return $this->markdown('emails.mail')
-                    ->subject('Order for ' . $this->infoCommand->name)
-                    ->from(env('MAIL_FROM_ADDRESS'))
-                    ->with('data', $this->infoCommand)
-                    ->with('products', $this->infoSession);
+            ->subject('Order for ' . $this->infoCommand->name)
+            ->from(env('MAIL_FROM_ADDRESS'))
+            ->with('data', $this->infoCommand)
+            ->with('products', $this->infoSession);
     }
 }

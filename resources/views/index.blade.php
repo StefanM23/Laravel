@@ -1,5 +1,9 @@
 @extends('layout')
 
+@section('header')
+    <title>{{ __('Index Page') }}</title>
+@endsection
+
 @section('content')
     <form action="index" method="POST">
         @csrf
@@ -16,7 +20,7 @@
                     </ul>
                 </div>
                 <div class="info-section">
-                    <button type="submit" name="id" value="{{ $product->id }}">{{ __('Add') }}Add</button>
+                    <button type="submit" name="id" value="{{ $product->id }}">{{ __('Add') }}</button>
                 </div>
             </div>
         @endforeach

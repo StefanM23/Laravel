@@ -1,4 +1,5 @@
 @component('mail::message')
+
 # Mail from Stefan for training!
 
 This order is for **{{ $data->name }}** and command need to be send to ,
