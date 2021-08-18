@@ -23,3 +23,10 @@ Route::post('index', 'IndexController@store');
 Route::get('cart', 'CartController@index');
 Route::post('cart', 'CartController@store');
 Route::delete('cart/{cartID}', 'CartController@destroy');
+
+Auth::routes();
+
+Route::get('products', 'ProductsController@index')->name('products');
+Route::get('products/{productID}/edit', 'ProductsController@edit')->name('products.edit');
+Route::delete('products/{productsID}', 'ProductsController@destroy')->name('products.delete');
+
