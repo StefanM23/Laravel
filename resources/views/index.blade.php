@@ -10,7 +10,7 @@
         @foreach ($products as $product)
             <div class="full-section">
                 <div class="info-section">
-                    <img src="{{ $product->image }}" alt="{{ __('image') }}">
+                    <img src="image/{{ $product->image }}" alt="{{ __('image') }}">
                 </div>
                 <div class="info-section">
                     <ul>
