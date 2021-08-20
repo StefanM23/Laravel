@@ -6,18 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Products extends Model
 {
-    public function modifie($title)
+    public function items()
     {
-        $this->title = $title;
-        $this->save();
+        return $this->hasMany(Items::class);
     }
-    public function add($image, $title, $description, $price)
-    {
-        $this->image = $image;
-        $this->title = $title;
-        $this->description = $description;
-        $this->price = $price;
-        $this->save();
-    }
-    public $timestamps = false;
 }

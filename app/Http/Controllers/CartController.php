@@ -52,7 +52,7 @@ class CartController extends Controller
                 'customer_comment' => $request->comments,
             ]);
             foreach ($arrSession as $item) {
-                DB::table('order')->insert([
+                DB::table('items')->insert([
                     'orders_id' => $idLast,
                     'products_id' => $item,
                 ]);

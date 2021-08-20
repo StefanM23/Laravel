@@ -51,16 +51,30 @@ class ProductController extends Controller
                     'price' => $request['price'],
                 ]);
         }
-
         return redirect()->route('product.edit', $id);
     }
-    public function store()
+
+    public function store(Request $request)
     {
-        $request = request()->validate([
+        $request->validate([
             'title' => 'required',
             'description' => 'required',
             'price' => 'required',
-            'image' => 'required',
+            'file' => ['required', 'mimes:jpeg,bmp,png'],
+        ]);
+
+        if ($files = $request->file('file')) {
+            $destinationPath = 'image/';
+            $profileImage = date('YmdHis') . "." . $files->getClientOriginalExtension();
+            $files->move($destinationPath, $profileImage);
+            $files = $profileImage;
+        }
+
+        DB::table('products')->insert([
+            'image' => $files,
+            'title' => $request->title,
+            'description' => $request->description,
+            'price' => $request->price,
         ]);
         return redirect()->route('product.create');
     }
