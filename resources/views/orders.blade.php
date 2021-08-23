@@ -21,14 +21,14 @@
                         @foreach ($infoCheckout as $product)
                             <li>
                                 <div class="checkout-i">
-                                    <div>Date: {{ $product->create_data }}</div>
-                                    <div>Customer: {{ $product->customer_name }}</div>
-                                    <div>Adress: {{ $product->customer_adress }}</div>
-                                    <div>Comments: {{ $product->customer_comment }}</div>
-                                    <div>Total order:  $</div>
+                                    <div>{{ __('Date') }}: {{ $product['create_data'] }}</div>
+                                    <div>{{ __('Customer') }}: {{ $product['customer_name'] }}</div>
+                                    <div>{{ __('Adress') }}: {{ $product['customer_adress'] }}</div>
+                                    <div>{{ __('Comments') }}: {{ $product['customer_comment'] }}</div>
+                                    <div>{{ __('Total order') }}: {{ array_sum(array_column($product['order_product'], 'price')) }} $</div>
                                 </div>
                                 <div class="checkout-j">
-                                    <a href="#" name='view'>{{ __('View') }}</a>
+                                    <a href="{{ route('order.show', $product['id']) }}" name='view'>{{ __('View') }}</a>
                                 </div>
                             </li>
                         @endforeach  

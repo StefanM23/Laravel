@@ -30,5 +30,11 @@
     "Image": "Image",
     "Save": "Sauver",
     "Products": "Produits",
-    "View": "Vux"
+    "View": "Vux",
+    "Date": "Date",
+    "Customer": "Client",
+    "Adress": "Une robe",
+    "Total order": "Commande totale",
+    "Back": "Arrière",
+    "Products Order Page": "Page de commande de produits"
 }

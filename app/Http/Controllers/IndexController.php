@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Products;
+use App\Product;
 use Illuminate\Http\Request;
 
 class IndexController extends Controller
 {
     public function index(Request $request)
     {
-        $products = $request->session()->has('cart') ? Products::whereNotIn('id', $request->session()->get('cart'))->get() : Products::all();
-
+        $products = $request->session()->has('cart') ? Product::whereNotIn('id', $request->session()->get('cart'))->get() : Product::all();
         return view('index', [
             'products' => $products,
         ]);

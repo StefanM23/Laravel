@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Products;
+use App\Product;
 use DB;
 use Illuminate\Http\Request;
 
@@ -25,7 +25,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $product = Products::find($id);
+        $product = Product::find($id);
         $request->validate([
             'title' => 'required',
             'description' => 'required',
@@ -78,5 +78,4 @@ class ProductController extends Controller
         ]);
         return redirect()->route('product.create');
     }
-
 }

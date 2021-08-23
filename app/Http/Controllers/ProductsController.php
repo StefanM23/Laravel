@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Products;
+use App\Product;
 use DB;
 
 class ProductsController extends Controller
@@ -24,7 +24,7 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $products = Products::all();
+        $products = Product::all();
         return view('products', [
             'products' => $products,
         ]);
@@ -36,7 +36,7 @@ class ProductsController extends Controller
     }
     public function edit($id)
     {
-        $product = Products::find($id);
+        $product = Product::find($id);
         return view('product', [
             'product' => $product,
         ]);

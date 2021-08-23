@@ -31,7 +31,7 @@ class MailSend extends Mailable
     {
         return $this->markdown('emails.mail')
             ->subject('Order for ' . $this->infoCommand->name)
-            ->from(env('MAIL_FROM_ADDRESS'))
+            ->from(\Config::get('values.from'))
             ->with('data', $this->infoCommand)
             ->with('products', $this->infoSession);
     }

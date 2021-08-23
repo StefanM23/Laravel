@@ -21,13 +21,13 @@
                     @foreach ($products as $product)
                         <div class="full-section-products" >
                             <div class="info-section">
-                                <img src="image/{{ $product['image'] }}" alt="{{ __('image') }}">
+                                <img src="image/{{ $product->image }}" alt="{{ __('image') }}">
                             </div>
                             <div class="info-section">
                                 <ul>
-                                    <li>{{ $product['title'] }}</li>
-                                    <li>{{ $product['description'] }}</li>
-                                    <li>{{ $product['price'] }}</li>
+                                    <li>{{ $product->title }}</li>
+                                    <li>{{ $product->description }}</li>
+                                    <li>{{ $product->price }}</li>
                                 </ul>
                             </div>
                             <div class="info-section">
