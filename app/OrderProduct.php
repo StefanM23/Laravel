@@ -10,7 +10,10 @@ class OrderProduct extends Model
     protected $fillable =[
         'orders_id',
         'products_id',
+        'price'
     ];
+    public $timestamps = false;
+    
     public function order()
     {
         return $this->belongsTo(Order::class);
@@ -20,5 +23,5 @@ class OrderProduct extends Model
         return $this->belongsTo(Product::class);
     }
     
-    public $timestamps = false;
+   
 }

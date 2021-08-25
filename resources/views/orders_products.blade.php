@@ -22,9 +22,9 @@
                             <ul>
                                 <li class="checkout-box">
                                     <div class="checkout-i">
-                                        <div>{{ __('Date') }}: {{ $orderDetail->create_data }}</div>
+                                        <div>{{ __('Date') }}: {{ $orderDetail->create_date }}</div>
                                         <div>{{ __('Customer') }}: {{ $orderDetail->customer_name }}</div>
-                                        <div>{{ __('Adress') }}: {{ $orderDetail->customer_adress }}</div>
+                                        <div>{{ __('Adress') }}: {{ $orderDetail->customer_address }}</div>
                                         <div>{{ __('Commnets') }}: {{ $orderDetail->customer_comment }}</div>
                                     </div>
                                 </li>

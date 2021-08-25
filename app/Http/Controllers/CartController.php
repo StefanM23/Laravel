@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Mail\MailSend;
+use App\Order;
+use App\OrderProduct;
 use App\Product;
-use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -29,38 +30,38 @@ class CartController extends Controller
             $idCartProject = $request->id;
             $request->session()->pull('cart.' . $idCartProject);
         }
-        return redirect('/cart');
+        return redirect()->route('cart.index');
     }
     public function store(Request $request)
     {
-        $arrSession = $request->session()->get('cart');
-        if (!empty($arrSession)) {
+        $arrayCartIdSession = $request->session()->get('cart');
+        if (!empty($arrayCartIdSession)) {
             $request->validate([
                 'name' => 'required',
                 'contacts' => 'required',
                 'comments' => 'required',
             ]);
 
-            $productsSession = Product::whereIn('id', array_values($arrSession))->get();
+            $productsSession = Product::whereIn('id', array_values($arrayCartIdSession))->get();
 
             $mailTo = \Config::get('values.mail');
-         
+
             Mail::to($mailTo)->send(new MailSend($request, $productsSession));
-          
-            $idLast = DB::table('orders')->insertGetId([
-                'customer_name' => $request->name,
-                'customer_adress' => $request->contacts,
-                'customer_comment' => $request->comments,
+
+            $orderInsert = Order::create([
+                'customer_name' => strip_tags($request->name),
+                'customer_address' => strip_tags($request->contacts),
+                'customer_comment' => strip_tags($request->comments),
             ]);
-            foreach ($arrSession as $item) {
-                $priceElement = Product::find($item);
-                DB::table('order_product')->insert([
-                    'order_id' => $idLast,
-                    'product_id' => $item,
+            foreach ($arrayCartIdSession as $productIdFromCart) {
+                $priceElement = Product::find($productIdFromCart);
+                OrderProduct::create([
+                    'order_id' => $orderInsert->id,
+                    'product_id' => $productIdFromCart,
                     'price' => $priceElement->price,
                 ]);
             }
         }
-        return redirect('/cart');
+        return redirect()->route('cart.index');
     }
 }

@@ -21,9 +21,9 @@
                         @foreach ($infoCheckout as $product)
                             <li>
                                 <div class="checkout-i">
-                                    <div>{{ __('Date') }}: {{ $product['create_data'] }}</div>
+                                    <div>{{ __('Date') }}: {{ $product['create_date'] }}</div>
                                     <div>{{ __('Customer') }}: {{ $product['customer_name'] }}</div>
-                                    <div>{{ __('Adress') }}: {{ $product['customer_adress'] }}</div>
+                                    <div>{{ __('Adress') }}: {{ $product['customer_address'] }}</div>
                                     <div>{{ __('Comments') }}: {{ $product['customer_comment'] }}</div>
                                     <div>{{ __('Total order') }}: {{ array_sum(array_column($product['order_product'], 'price')) }} $</div>
                                 </div>

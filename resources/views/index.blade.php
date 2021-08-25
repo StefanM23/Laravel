@@ -26,6 +26,6 @@
         @endforeach
     </form>
     <div class="cart-section">
-        <a href="{{ url('/cart') }}">{{ __('Go to cart') }}</a>
+        <a href="{{ route('cart.index') }}">{{ __('Go to cart') }}</a>
     </div>
 @endsection

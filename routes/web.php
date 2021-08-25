@@ -20,22 +20,21 @@ Route::get('welcome', function () {
 Route::get('index', 'IndexController@index');
 Route::post('index', 'IndexController@store');
 
-Route::get('cart', 'CartController@index');
+Route::get('cart', 'CartController@index')->name('cart.index');
 Route::post('cart', 'CartController@store');
 Route::delete('cart/{cartID}', 'CartController@destroy');
 
 Auth::routes();
 
-Route::get('products', 'ProductsController@index')->name('products');
+Route::get('products', 'ProductsController@index')->name('products.index');
+
 Route::get('product/create', 'ProductsController@create')->name('product.create');
 Route::get('product/{productID}/edit', 'ProductsController@edit')->name('product.edit');
-Route::delete('products/{productsID}', 'ProductsController@destroy')->name('products.delete');
+Route::delete('products/{productsID}', 'ProductsController@destroy');
 
 Route::post('product', 'ProductController@store')->name('product.store');
 Route::put('product/{productID}', 'ProductController@update')->name('product.update');
 
-Route::get('orders', 'OrdersController@index')->name('orders.index');
-
-Route::get('orders_products/{orderId}', 'OrdersController@show');
+Route::get('orders', 'OrderController@index')->name('orders.index');
 
 Route::get('orders_products/{orderId}', 'OrderProductController@show')->name('order.show');

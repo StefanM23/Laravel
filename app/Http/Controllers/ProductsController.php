@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Product;
-use DB;
 
 class ProductsController extends Controller
 {
@@ -31,12 +30,18 @@ class ProductsController extends Controller
     }
     public function destroy($id)
     {
-        DB::table('products')->where('id', $id)->delete();
-        return redirect()->route('products');
+        Product::find($id)->delete();
+        return redirect()->route('products.index');
     }
     public function edit($id)
     {
         $product = Product::find($id);
+
+        if (is_null($product)) {
+            $products = Product::all();
+            return redirect()->route('products.index', ['products' => $products]);
+        }
+
         return view('product', [
             'product' => $product,
         ]);

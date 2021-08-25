@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Product;
-use DB;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -23,6 +22,7 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
     public function update(Request $request, $id)
     {
         $product = Product::find($id);
@@ -42,14 +42,15 @@ class ProductController extends Controller
             } else {
                 $files = $request['image'];
             }
-            DB::table('products')
-                ->where('id', $id)
-                ->update([
-                    'image' => $files,
-                    'title' => $request['title'],
-                    'description' => $request['description'],
-                    'price' => $request['price'],
-                ]);
+
+            //update data in database with model
+            Product::where('id', $id)->update([
+                'image' => $files,
+                'title' => strip_tags($request->title),
+                'description' => strip_tags($request->description),
+                'price' => strip_tags($request->price),
+            ]);
+
         }
         return redirect()->route('product.edit', $id);
     }
@@ -70,12 +71,14 @@ class ProductController extends Controller
             $files = $profileImage;
         }
 
-        DB::table('products')->insert([
+        //insert data in database with model
+        Product::create([
             'image' => $files,
-            'title' => $request->title,
-            'description' => $request->description,
-            'price' => $request->price,
+            'title' => strip_tags($request->title),
+            'description' => strip_tags($request->description),
+            'price' => strip_tags($request->price),
         ]);
+        
         return redirect()->route('product.create');
     }
 }

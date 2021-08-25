@@ -30,7 +30,7 @@
                         <input class="item-i" type="text" name="price"  placeholder="{{ __('Price') }}" value="{{ isset($product) ? $product->price : old('price') }}"><br>
                         <input class="item-j" type="text" name="image"  placeholder="{{ __('Image') }}" value="{{ isset($product) ? $product->image : old('image') }}">
                         <input class="item-j" type="file" name="file"><br>
-                        <a class="item-j-y" href="{{ route('products') }}">{{ __('Products') }}</a>
+                        <a class="item-j-y" href="{{ route('products.index') }}">{{ __('Products') }}</a>
             
                         <button class="item-j-y" type="submit" name="submit"  >{{ __('Save') }}</button>
                     </form> 
