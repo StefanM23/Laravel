@@ -40,6 +40,9 @@
                                     <button type="submit" name="id" >{{ __('Delete') }}</button>
                                 </div>
                             </form>
+                            <div class="info-section">
+                                <a href="{{ route('tag.show', ['id' => $product['id'], 'type' => 'product' ]) }}" name='addTag'>{{ __('Add Tag') }}</a>
+                            </div>
                         </div>
                     @endforeach
                     <div class="cart-section-products">

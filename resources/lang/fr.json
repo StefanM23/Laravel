@@ -36,5 +36,12 @@
     "Adress": "Une robe",
     "Total order": "Commande totale",
     "Back": "Arrière",
-    "Products Order Page": "Page de commande de produits"
+    "Products Order Page": "Page de commande de produits",
+    "Add Tag": "Ajouter une étiquette",
+    "Product": "Produit",
+    "This page is for add tags to products or orders.": "Cette page sert à ajouter des balises aux produits ou aux commandes.",
+    "Tags": "Mots clés",
+    "Please insert a tag": "Veuillez insérer une balise",
+    "Tag Page": "Marquer la page",
+    "Add tag": "Ajouter une étiquette"
 }

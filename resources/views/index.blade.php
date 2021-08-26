@@ -17,6 +17,12 @@
                         <li>{{ $product->title }}</li>
                         <li>{{ $product->description }}</li>
                         <li>{{ $product->price }}</li>
+                        <li>
+                            {{ __('Tags') }}: 
+                            @foreach ($product->tags as $tag)
+                                <span class="tags"> # {{ $tag->name }}</span>
+                            @endforeach
+                        </li>
                     </ul>
                 </div>
                 <div class="info-section">

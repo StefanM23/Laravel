@@ -11,7 +11,7 @@
     list-style-type: none;
     padding: 0px;
     margin: 0px;
-    font-size: 3vh;
+    font-size: 22px;
 }
 .info-section button{
     position: relative;
@@ -31,7 +31,7 @@
 }
 .full-section-products{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     width: 600px;
 }
 .cart-section-products{
@@ -85,7 +85,7 @@ button{
 }
 .checkout-box li{
     display: grid;
-    grid-template-columns: 80% auto;
+    grid-template-columns: 65% 15% 20%;
     font-size: large;
 }
 .checkout-j a{
@@ -123,4 +123,9 @@ button{
 .section-x-info ul{
     list-style-type: none;
     margin-left: -10px;
+}
+.tags{
+    color:mediumpurple;
+    font-size: 22px;
+    font-weight: bold;
 }

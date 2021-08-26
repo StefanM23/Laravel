@@ -38,3 +38,6 @@ Route::put('product/{productID}', 'ProductController@update')->name('product.upd
 Route::get('orders', 'OrderController@index')->name('orders.index');
 
 Route::get('orders_products/{orderId}', 'OrderProductController@show')->name('order.show');
+
+Route::get('tag/{id}', 'TagController@show')->name('tag.show');
+Route::post('tag', 'TagController@store')->name('tag');

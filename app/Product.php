@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Product extends Model
 {
 
@@ -18,4 +19,10 @@ class Product extends Model
     {
         return $this->hasMany(OrderProduct::class);
     }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
+    
 }

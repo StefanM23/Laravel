@@ -23,12 +23,15 @@
                                 <div class="checkout-i">
                                     <div>{{ __('Date') }}: {{ $product['create_date'] }}</div>
                                     <div>{{ __('Customer') }}: {{ $product['customer_name'] }}</div>
-                                    <div>{{ __('Adress') }}: {{ $product['customer_address'] }}</div>
+                                    <div>{{ __('Address') }}: {{ $product['customer_address'] }}</div>
                                     <div>{{ __('Comments') }}: {{ $product['customer_comment'] }}</div>
                                     <div>{{ __('Total order') }}: {{ array_sum(array_column($product['order_product'], 'price')) }} $</div>
                                 </div>
                                 <div class="checkout-j">
                                     <a href="{{ route('order.show', $product['id']) }}" name='view'>{{ __('View') }}</a>
+                                </div>
+                                <div class="checkout-j">
+                                    <a href="{{ route('tag.show', [ 'id' => $product['id'], 'type' => 'order' ]) }}" name='addTag'>{{ __('Add Tag') }}</a>
                                 </div>
                             </li>
                         @endforeach  

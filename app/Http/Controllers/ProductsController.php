@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Product;
-
+use App\Order;
+use Illuminate\Http\Request;
 class ProductsController extends Controller
 {
     /**
@@ -50,4 +51,5 @@ class ProductsController extends Controller
     {
         return view('product');
     }
+    
 }

@@ -22,8 +22,12 @@
         }
         .full-section{
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            width: 400px;
+            grid-template-columns: 30% 60% 10%;
+            width: 500px;
+        }
+        .full-section span{
+            color: mediumslateblue;
+            font-weight: bold;
         }
         .info-section{
             padding: 5px;

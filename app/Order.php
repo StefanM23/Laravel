@@ -23,4 +23,8 @@ class Order extends Model
     {
         return $this->belongsToMany(Product::class)->as('pivot')->withPivot('price');
     }
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
 }
