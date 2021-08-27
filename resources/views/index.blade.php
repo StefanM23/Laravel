@@ -18,7 +18,7 @@
                         <li>{{ $product->description }}</li>
                         <li>{{ $product->price }}</li>
                         <li>
-                            {{ __('Tags') }}: 
+                            {{ __('Tagss') }}: 
                             @foreach ($product->tags as $tag)
                                 <span class="tags"> # {{ $tag->name }}</span>
                             @endforeach
