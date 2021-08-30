@@ -17,7 +17,7 @@ Route::get('welcome', function () {
     return view('welcome');
 });
 
-Route::get('index', 'IndexController@index');
+Route::get('index', 'IndexController@index')->name('index');
 Route::post('index', 'IndexController@store');
 
 Route::get('cart', 'CartController@index')->name('cart.index');

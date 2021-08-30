@@ -11,18 +11,19 @@ class IndexController extends Controller
     {
         $products = $request->session()->has('cart') ? Product::whereNotIn('id', $request->session()->get('cart'))->get() : Product::all();
         if($request->ajax()){
-            return response()->json($products);
+            return response()->json($products->toArray());
         }
+        // $request->session()->flash('cart', 'Task was successful!');
         return view('index');
     }
     
     public function store(Request $request)
     {
-        // dd($request);
         if (isset($request->id)) {
             $idProduct = $request->id;
             $request->session()->put('cart.' . $idProduct, $idProduct);
         }
-        return redirect('index');
+     
+        return redirect()->route('index');
     }
 }

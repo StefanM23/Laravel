@@ -21,9 +21,9 @@ class CartController extends Controller
         $products = $request->session()->has('cart') ? Product::whereIn('id', $addCartProductId)->get() : Product::whereIn('id', [-1])->get();
 
         if($request->ajax()){
-            return response()->json($products);
+            return response()->json($products->toArray());
         }
-
+        
         return view('cart', [
             'products' => $products,
         ]);
