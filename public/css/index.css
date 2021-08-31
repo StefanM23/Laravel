@@ -11,3 +11,30 @@ td{
     text-align: center;
     padding: 10px;
 }
+
+    
+.cart-section form {
+    width: 500px;
+    padding: 0px;
+    margin-left:40px;
+}
+.cart-section form input{
+    width: 96%;
+    margin-bottom: 10px;
+    margin-left: 6px;
+}
+.cart-section form textarea{
+    width: 96%;
+    margin-bottom: 10px;
+    margin-left: 6px;
+}
+.cart-section form a,.cart-section form button{
+    display: inline-flex;
+    font-size: 20px;
+    position: relative;
+    left: 190px;
+}  
+.card-body{
+    width: 50vw;
+    margin: 15% auto;
+}   

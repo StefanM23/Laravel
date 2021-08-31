@@ -18,12 +18,12 @@ class CartController extends Controller
             $addCartProductId = $request->session()->get('cart');
         }
 
-        $products = $request->session()->has('cart') ? Product::whereIn('id', $addCartProductId)->get() : Product::whereIn('id', [-1])->get();
+        $products = $request->session()->has('cart') ? Product::whereIn('id', $addCartProductId)->get() : [];
 
-        if($request->ajax()){
+        if ($request->ajax()) {
             return response()->json($products->toArray());
         }
-        
+
         return view('cart', [
             'products' => $products,
         ]);
@@ -34,6 +34,11 @@ class CartController extends Controller
             $idCartProject = $request->id;
             $request->session()->pull('cart.' . $idCartProject);
         }
+
+        if ($request->ajax()) {
+            return response()->json([], 204);
+        }
+
         return redirect()->route('cart.index');
     }
     public function store(Request $request)
@@ -66,6 +71,12 @@ class CartController extends Controller
                 ]);
             }
         }
+
+
+        if ($request->ajax()) {
+            return response()->json([], 204);
+        }
+
         return redirect()->route('cart.index');
     }
 }
