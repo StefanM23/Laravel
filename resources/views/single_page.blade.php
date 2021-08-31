@@ -9,15 +9,8 @@
     <link href="{{ asset('css/index.css') }}" rel="stylesheet">
     <!-- Custom JS script -->
     <script type="text/javascript">  
-        var config = {
-            routes: {
-                index: '{{ route('index') }}',
-              
-            }
-        };
-
-
         $(document).ready(function () {
+
             //function for render index page
             function renderListIndex(products) {
                 html = [
@@ -45,6 +38,7 @@
 
                 return html;
             }
+
             //function for render a part from cart page
             function renderListCart(products) {
                 html = [
@@ -83,10 +77,11 @@
 
                 switch(window.location.hash) {
                     case '#cart':
+
                         // Show the cart page
                         $('.cart').show();
+
                         // Load the cart products from the server
-                    
                         $.ajax('cart', {
                             dataType: 'json',
                             success: function (response) {
@@ -96,20 +91,25 @@
                         }).done(()=>{
                             actionAddRemove('cart');
                         });
+
                         break;
                     case '#login':
+
                         // Show the login page
                         $('.login').show();
                        
                         break; 
                     case '#products':
+
                         // Show the login page
                         $('.products').show();
                        
                         break;  
                     default:
+
                         // Show the index page
                         $('.index').show();
+
                         // Load the index products from the server
                         $.ajax('index', {
                             dataType: 'json',
@@ -120,7 +120,6 @@
                         }).done(() => {
                             actionAddRemove('index');
                         });
-                        
                         break;
                 }
             }
@@ -180,6 +179,7 @@
             if (window.location.hash == "#cart") {
                 $(".ajaxcheckout").on('submit',function(event) {
                     event.preventDefault();
+
                     $.ajax('cart', {
                         dataType: 'json',
                         type: "POST",
@@ -200,11 +200,11 @@
                     }); 
                 });
             }
+
             if (window.location.hash == "#login") {
-             
-                $(".ajaxlogin").on('submit',function(event) {
+                $(".ajaxlogin").on('submit', function(event) {
                     event.preventDefault();
-                    console.log($(this).serializeArray())
+
                     $.ajax('login', {
                         dataType: 'json',
                         type: "POST",
@@ -215,11 +215,11 @@
                         },
                         success: function (response) {
                             window.location.hash = 'products';
-                            console.log(event.target)
                         }
                     }).done(() => {
                         console.log('Login');
-                    }); 
+                    });
+
                 });
             }
 
@@ -300,8 +300,7 @@
 
          <!-- The products page -->
          <div class="page products">
-
-
+            <h2>header</h2>
         </div>  
     </body>
 </html
