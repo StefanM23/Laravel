@@ -23,7 +23,6 @@ class IndexController extends Controller
             $idProduct = $request->id;
             $request->session()->put('cart.' . $idProduct, $idProduct);
         }
-     
         return redirect()->route('index');
     }
 }

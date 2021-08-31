@@ -17,6 +17,10 @@ Route::get('welcome', function () {
     return view('welcome');
 });
 
+Route::get('/sp', function () {
+    return view('single_page');
+});
+
 Route::get('index', 'IndexController@index')->name('index');
 Route::post('index', 'IndexController@store');
 
