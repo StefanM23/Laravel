@@ -209,7 +209,7 @@
                     var id = $(this).serializeArray()[2].value;
                   
                     var formData = new FormData($('.ajaxedit')[0]);
-                    formData.append('_token', '{{ csrf_token }}');
+                    formData.append('csrfmiddlewaretoken', '{{ csrf_token() }}');
 
                     $.ajax('product/'+ id, {
                         dataType: 'json',
