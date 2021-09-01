@@ -1,6 +1,6 @@
 <html>
     <head>
-    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Load the jQuery JS library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>  
     
@@ -9,6 +9,13 @@
     <link href="{{ asset('css/index.css') }}" rel="stylesheet">
     <!-- Custom JS script -->
     <script type="text/javascript">  
+         var database = {
+            old: {
+                title: '{{ old('title') }}',
+            }
+        };
+
+
         $(document).ready(function () {
 
             //function for render index page
@@ -59,7 +66,7 @@
                             '<td>' + product.title + '</td>',                       
                             '<td>' + product.description + '</td>',                       
                             '<td>' + product.price + '</td>',  
-                            '<td><form class="ajaxdelete">@csrf<button type="submit" class="remove-data">Remove</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                      
+                            '<td><form class="ajaxremove">@csrf<button type="submit" class="remove-data">Remove</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                      
                         '</tr>'                        
                     ].join('');
                 });
@@ -67,17 +74,55 @@
                 return html;
             }
 
-            /**
-            * URL hash change handler
-            */
+            function renderListProducts(products) {
+                html = [
+                        '<tr>',
+                            '<th>Image</th>',
+                            '<th>Title</th>',
+                            '<th>Description</th>',
+                            '<th>Price</th>',
+                            '<th></th>',
+                            '<th></th>',
+                        '</tr>',
+
+                ].join('');
+
+                
+                $.each(products, function (key, product) {
+                    html += [
+                        '<tr>',
+                            '<td><img src="image/' + product.image + '" alt="image"></td>', 
+                            '<td>' + product.title + '</td>',                       
+                            '<td>' + product.description + '</td>',                       
+                            '<td>' + product.price + '</td>',
+                            '<td><a href="#product/'+ product.id +'/edit" name="edit" class="edit">Edit</a></td>',
+                            '<td><form class="ajaxdelete">@csrf<button type="submit" class="delete-data">Remove</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                      
+                        '</tr>'                        
+                    ].join('');
+                });
+                
+                return html;
+            }
+
+            function renderListProductsEdit(product) {
+                $('#idEdit').attr('value', product.id);
+                $('#titleEdit').attr('value', product.title);
+                $('#descriptionEdit').attr('value', product.description);
+                $('#priceEdit').attr('value', product.price);
+                $('#imageEdit').attr('value', product.image);
+             
+            }
+           
             window.onhashchange = function () {
 
                 // First hide all the pages
                 $('.page').hide();
+             
+                var urlHash = window.location.hash;
+                var id = urlHash.split('/')[1];
 
-                switch(window.location.hash) {
+                switch(urlHash) {
                     case '#cart':
-
                         // Show the cart page
                         $('.cart').show();
 
@@ -87,6 +132,7 @@
                             success: function (response) {
                                 // Render the products in the cart list
                                 $('.cart .list').html(renderListCart(response));
+
                             }
                         }).done(()=>{
                             actionAddRemove('cart');
@@ -100,16 +146,49 @@
                        
                         break; 
                     case '#products':
-
-                        // Show the login page
+                        // Show the products page
                         $('.products').show();
-                       
-                        break;  
-                    default:
+                        // Load the cart products from the server
+                        $.ajax('products', {
+                            dataType: 'json',
+                            success: function (response) {
+                                // Render the products in the cart list
+                                $('.products .list').html(renderListProducts(response));
+                            }
+                        }).done(() => {
+                            actionDeleteRecord();
+                        });;
 
+                        break; 
+                    case '#product/'+ id + '/edit':
+                        // Show the product-edit page
+                        $('.products-edit').show();
+                      
+                        $.ajax('product/'+ id + '/edit', {
+                        dataType: 'json',
+                        success: function (response) {
+                            $('.products-edit').html(renderListProductsEdit(response));
+                        }
+                        }).done(()=>{
+                            actionEditRecord();
+                        });
+                        break;
+                    case '#product/create':
+                           // Show the product-create page
+                        $('.products-create').show();    
+                        $.ajax('product/create', {
+                        dataType: 'json',
+                        success: function (response) { 
+                        }
+                        }).done(()=>{
+                            actionAddRecord();
+                        });
+                      
+                        break;
+                    
+                    default:
                         // Show the index page
                         $('.index').show();
-
                         // Load the index products from the server
                         $.ajax('index', {
                             dataType: 'json',
@@ -123,8 +202,70 @@
                         break;
                 }
             }
+            function actionEditRecord() {
+                $(".ajaxedit").on('submit', function(event) {
+                    event.preventDefault();
+                 
+                    var id = $(this).serializeArray()[2].value;
+                  
+                    var formData = new FormData($('.ajaxedit')[0]);
+                    formData.append('_token', '{{ csrf_token }}');
+
+                    $.ajax('product/'+ id, {
+                        dataType: 'json',
+                        type: 'PUT',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                          
+                        }
+                    })
+                    
+                });
+            }
+            function actionAddRecord() {
+                $(".ajaxadd").on('submit', function(event) {
+                    event.preventDefault();
+                   
+                    var formData = new FormData($('.ajaxadd')[0]);
+
+                    $.ajax('product', {
+                        dataType: 'json',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {}
+                    })
+                    
+                });
+            }
+
             
+            function actionDeleteRecord() {
+                $('.ajaxdelete').on('submit', function(event) {
+                    event.preventDefault();
+                    var id = $(this).serializeArray()[1].value;
+                    $.ajax('products/'+ id, {
+                        dataType: 'json',
+                        type: 'DELETE',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": id,
+                        },
+                        beforeSend:function(){
+                            $(".delete-data").addClass('disabled').text('Loading...');
+                        },
+                        success: function (response) {
+                            $(".delete-data").removeClass('disabled').text('Remove');
+                            $(event.target).parents('tr').remove(); 
+                        }
+                    });
+                })
+            }
             
+
             function actionAddRemove(type) {
                 switch (type) {
                     case 'index':
@@ -145,13 +286,13 @@
                                     $(event.target).parents('tr').remove(); 
                                 }
                             }).done(() => {
-                                 console.log('ADD');
+                                 console.log('Remove');
                             });
                         });
                       
                         break;    
                     case 'cart':
-                        $(".ajaxdelete").on('submit', function(event) {
+                        $(".ajaxremove").on('submit', function(event) {
                             event.preventDefault();
                             var id = $(this).serializeArray()[1].value;
                             $.ajax('cart/'+ id, {
@@ -176,6 +317,7 @@
                     break;
                 }
             }
+
             if (window.location.hash == "#cart") {
                 $(".ajaxcheckout").on('submit',function(event) {
                     event.preventDefault();
@@ -200,7 +342,7 @@
                     }); 
                 });
             }
-
+         
             if (window.location.hash == "#login") {
                 $(".ajaxlogin").on('submit', function(event) {
                     event.preventDefault();
@@ -222,7 +364,24 @@
 
                 });
             }
-
+               
+            if (window.location.hash == "#products") {       
+                $("#logout-form").on('submit', function(event) {
+                    event.preventDefault();
+                        
+                    $.ajax('logout', {
+                        dataType: 'json',
+                        type: "POST",
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                        },
+                        success: function (response) {
+                            window.location.hash = 'login';
+                        }
+                    })
+                });
+            } 
+                  
             window.onhashchange();
         });
     </script>
@@ -289,7 +448,7 @@
 
                     <div class="form-group row mb-0">
                         <div class="col-md-8 offset-md-4">
-                            <button type="submit" class="btn btn-primary login">
+                            <button type="submit"  class="btn btn-primary login login-button">
                                 {{ __('Login') }}
                             </button>
                         </div>
@@ -300,7 +459,47 @@
 
          <!-- The products page -->
          <div class="page products">
-            <h2>header</h2>
+            <table class="list"></table>
+
+            <div class="cart-section-products">
+                <a href="#product/create" name='add'>{{ __('Add') }}</a>
+            </div>
+
+            <div class="cart-section-products">
+                <a href="#login" name="logout" id="logout">{{ __('Logout') }}</a>
+            </div>
+            <form id="logout-form"  class="ajaxlogout" style="display: none;">
+                @csrf
+            </form>
         </div>  
+
+        <!-- The edit page -->
+        <div class="page products-edit">
+            <form enctype="multipart/form-data"  class="ajaxedit myProductFrom">
+                @csrf
+                @method("PUT")
+                <input type="hidden" name="id" id="idEdit">
+                <input class="item-i" type="text" name="title" id="titleEdit"  placeholder="Title" value="{{ old('title') }}"><br>
+                <input class="item-i" type="text" name="description" id="descriptionEdit" placeholder="Description" value="{{ old('description') }}"><br>
+                <input class="item-i" type="text" name="price" id="priceEdit" placeholder="Price" value="{{ old('price') }}"><br>
+                <input class="item-j" type="text" name="image" id="imageEdit" placeholder="Image" value="{{ old('image') }}">
+                <input class="item-j" type="file" name="file"><br>
+                <a class="item-j-y" href="#products">Products</a>
+                <button class="item-j-y" type="submit" name="submit">Save</button>
+            </form>  
+        </div> 
+        <!-- The create page -->
+        <div class="page products-create">
+            <form enctype="multipart/form-data"  class="ajaxadd myProductFrom">
+                @csrf
+                <input class="item-i" type="text" name="title"   placeholder="Title" value="{{ old('title') }}"><br>
+                <input class="item-i" type="text" name="description"  placeholder="Description" value="{{ old('description') }}"><br>
+                <input class="item-i" type="text" name="price"  placeholder="Price" value="{{ old('price') }}"><br>
+                <input class="item-j" type="text" name="image"  placeholder="Image" value="{{ old('image') }}">
+                <input class="item-j" type="file" name="file"><br>
+                <a class="item-j-y" href="#products">Products</a>
+                <button class="item-j-y" type="submit" name="submit">Save</button>
+            </form>      
+        </div> 
     </body>
 </html

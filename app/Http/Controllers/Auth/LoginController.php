@@ -39,6 +39,7 @@ class LoginController extends Controller
         if ($request->ajax()) {
             return response()->json([], 204);
         }
+        
         $this->middleware('guest')->except('logout');
     }
     public function logout()

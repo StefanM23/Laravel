@@ -38,3 +38,28 @@ td{
     width: 50vw;
     margin: 15% auto;
 }   
+.myProductFrom{
+    width: 700px;
+    padding: 100px;
+    margin: 100px auto;
+    font-size: 20px;
+}
+.item-i{
+    width: 100%;
+    padding: 10px;
+    margin: 10px;
+    margin-top: 15px;
+}
+.item-j{
+    width: 39%;
+    padding: 10px;
+    margin: 10px;
+    margin-top: 15px;
+}
+.item-j-y{
+    position: relative;
+    width: 39%;
+    padding: 10px;
+    margin: 10px;
+    left:200px;
+}

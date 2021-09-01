@@ -26,6 +26,7 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $product = Product::find($id);
+        // dd($product);
         $request->validate([
             'title' => 'required',
             'description' => 'required',
@@ -33,25 +34,30 @@ class ProductController extends Controller
             'image' => 'required',
             'file' => 'mimes:jpeg,bmp,png',
         ]);
-        if ($product->title != $request['title'] || $product->description != $request['description'] || $product->price != $request['price'] || !empty($request['file'])) {
-            if ($files = $request->file('file')) {
-                $destinationPath = 'image/';
-                $profileImage = date('YmdHis') . "." . $files->getClientOriginalExtension();
-                $files->move($destinationPath, $profileImage);
-                $files = $profileImage;
-            } else {
-                $files = $request['image'];
-            }
-
-            //update data in database with model
-            Product::where('id', $id)->update([
-                'image' => $files,
-                'title' => strip_tags($request->title),
-                'description' => strip_tags($request->description),
-                'price' => strip_tags($request->price),
-            ]);
-
+        
+        if ($files = $request->file('file')) {
+            $destinationPath = 'image/';
+            $profileImage = date('YmdHis') . "." . $files->getClientOriginalExtension();
+            $files->move($destinationPath, $profileImage);
+            $files = $profileImage;
+        } else {
+            $files = $request['image'];
         }
+           
+        //update data in database with model
+        Product::where('id', $id)->update([
+            'image' => $files,
+            'title' => strip_tags($request->title),
+            'description' => strip_tags($request->description),
+            'price' => strip_tags($request->price),
+        ]);
+
+        
+        
+        if ($request->ajax()) {
+            return response()->json([], 204);
+        }
+
         return redirect()->route('product.edit', $id);
     }
 
