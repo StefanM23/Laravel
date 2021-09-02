@@ -1,4 +1,4 @@
-<html>
+<html lang="{{ config('app.locale') }}">
     <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Load the jQuery JS library -->
@@ -8,24 +8,44 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/index.css') }}" rel="stylesheet">
     <!-- Custom JS script -->
-    <script type="text/javascript">  
-         var database = {
-            old: {
-                title: '{{ old('title') }}',
+    <script type="text/javascript"> 
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        };
+        });
+        
+        //request for translate /to take JSON file with translation
+        var fr;
+        $.ajax({
+            'async': false,
+            'global': false,
+            'url': "http://localhost/cms2/resources/lang/fr.json",
+            'dataType': "json",
+            'success': function (data) {
+                fr = data;
+            }
+        });
 
+        function __(text) {
+            if ($('html').attr('lang') == 'fr' && fr[text]) {
+                return fr[text];
+            }
+            return text;
+        }
 
+        //loggin var
+        var isLoggedIn = false;
         $(document).ready(function () {
-
             //function for render index page
             function renderListIndex(products) {
                 html = [
                         '<tr>',
-                            '<th>Image</th>',
-                            '<th>Title</th>',
-                            '<th>Description</th>',
-                            '<th>Price</th>',
+                            '<th>'+ __('Image') + '</th>',
+                            '<th>'+ __('Title') + '</th>',
+                            '<th>'+ __('Description') + '</th>',
+                            '<th>'+ __('Price') + '</th>',
                             '<th></th>',
                         '</tr>',
 
@@ -34,11 +54,11 @@
                 $.each(products, function (key, product) {
                     html += [
                         '<tr>',
-                            '<td><img src="image/' + product.image + '" alt="image"></td>', 
+                            '<td><img src="image/' + product.image + '" alt="'+ __('image') + '"></td>', 
                             '<td>' + product.title + '</td>',                       
                             '<td>' + product.description + '</td>',                       
                             '<td>' + product.price + '</td>',     
-                            '<td><form class="ajaxadd">@csrf<button type="submit" class="add-data">Add</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                  
+                            '<td><form class="ajaxadd">@csrf<button type="submit" class="add-data">'+ __('Add') + '</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                  
                         '</tr>'
                     ].join('');
                 });
@@ -50,10 +70,10 @@
             function renderListCart(products) {
                 html = [
                         '<tr>',
-                            '<th>Image</th>',
-                            '<th>Title</th>',
-                            '<th>Description</th>',
-                            '<th>Price</th>',
+                            '<th>'+ __('Image') + '</th>',
+                            '<th>'+ __('Title') + '</th>',
+                            '<th>'+ __('Description') + '</th>',
+                            '<th>'+ __('Price') + '</th>',
                             '<th></th>',
                         '</tr>',
 
@@ -66,7 +86,7 @@
                             '<td>' + product.title + '</td>',                       
                             '<td>' + product.description + '</td>',                       
                             '<td>' + product.price + '</td>',  
-                            '<td><form class="ajaxremove">@csrf<button type="submit" class="remove-data">Remove</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                      
+                            '<td><form class="ajaxremove">@csrf<button type="submit" class="remove-data">'+ __('Remove') + '</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                      
                         '</tr>'                        
                     ].join('');
                 });
@@ -77,10 +97,10 @@
             function renderListProducts(products) {
                 html = [
                         '<tr>',
-                            '<th>Image</th>',
-                            '<th>Title</th>',
-                            '<th>Description</th>',
-                            '<th>Price</th>',
+                            '<th>'+ __('Image') + '</th>',
+                            '<th>'+ __('Title') + '</th>',
+                            '<th>'+ __('Description') + '</th>',
+                            '<th>'+ __('Price') + '</th>',
                             '<th></th>',
                             '<th></th>',
                         '</tr>',
@@ -91,12 +111,12 @@
                 $.each(products, function (key, product) {
                     html += [
                         '<tr>',
-                            '<td><img src="image/' + product.image + '" alt="image"></td>', 
+                            '<td><img src="image/' + product.image + '" alt="'+ __('image') + '"></td>', 
                             '<td>' + product.title + '</td>',                       
                             '<td>' + product.description + '</td>',                       
                             '<td>' + product.price + '</td>',
-                            '<td><a href="#product/'+ product.id +'/edit" name="edit" class="edit">Edit</a></td>',
-                            '<td><form class="ajaxdelete">@csrf<button type="submit" class="delete-data">Remove</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                      
+                            '<td><a href="#product/'+ product.id +'/edit" name="edit" class="edit">'+ __('Edit') + '</a></td>',
+                            '<td><form class="ajaxdelete">@csrf<button type="submit" class="delete-data">'+ __('Delete') + '</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                      
                         '</tr>'                        
                     ].join('');
                 });
@@ -112,7 +132,72 @@
                 $('#imageEdit').attr('value', product.image);
              
             }
+
            
+            function renderListOrders(products) {
+                var html = [];
+                $.each(products, function (key, product) {
+
+                    sum = product.order_product.reduce((start,priceAdd)=>{
+                        return start + (parseFloat(priceAdd.price) || 0)
+                    },0)
+                   
+                    html += [
+                        '<li>',
+                            '<div class="checkout-i">', 
+                                '<div>'+ __('Date') + ': '+ product.create_date+'</div>',  
+                                '<div>'+ __('Customer') + ':'+ product.customer_name+' </div>', 
+                                '<div>'+ __('Address') + ': '+ product.customer_address+'</div>',                      
+                                '<div>'+ __('Comments') + ': '+ product.customer_comment+'</div>', 
+                                '<div>'+ __('Total order') + ': '+ sum +' </div>',                  
+                            '</div>',
+                            '<div class="checkout-j">',
+                                '<a href="#order/'+ product.id +'" name="view">'+ __('View') + '</a>',
+                            '</div>',          
+                        '</li>'                        
+                    ].join('');
+                });
+                
+                return html;
+            }
+
+            function renderListOrder(order) {
+
+                html = [
+                        '<div class="section-i">',                           
+                            '<div class="checkout-box">',
+                                '<div class="checkout-i">',
+                                    '<div>'+ __('Date') + ': '+ order.create_date +'</div>',
+                                    '<div>'+ __('Customer') + ': '+ order.customer_name +'</div>',
+                                    '<div>'+ __('Address') + ': '+ order.customer_address +'</div>',
+                                    '<div>'+ __('Comments') + ': '+ order.customer_comment +'</div>',  
+                                '</div>',
+                            '</div>', 
+                        '</div>',
+                        '<div class="section-i">',        
+                ].join('');
+           
+                $.each(order.product, function (key, product) {
+
+                    html += [
+                        '<div class="section-i-info">',
+                            '<div class="section-x-info">', 
+                                '<img src="http://localhost/cms2/public/image/'+ product.image +'" alt="'+ __('image') + '">',  
+                            '</div>', 
+                            '<div class="section-x-info">',
+                                '<ul>',
+                                    '<li>'+ __('Title') + ':'+ product.title +'</li>',                      
+                                    '<li>'+ __('Description') + ':'+ product.description +'</li>',  
+                                    '<li>'+ __('Price') + ':'+ product.pivot.price +' </li>',
+                                '</ul>',  
+                            '</div>',
+                        '</div>', 
+                    ].join('');
+                });
+   
+                return html;
+            }
+
             window.onhashchange = function () {
 
                 // First hide all the pages
@@ -120,7 +205,7 @@
              
                 var urlHash = window.location.hash;
                 var id = urlHash.split('/')[1];
-
+               
                 switch(urlHash) {
                     case '#cart':
                         // Show the cart page
@@ -131,6 +216,7 @@
                             dataType: 'json',
                             success: function (response) {
                                 // Render the products in the cart list
+                              
                                 $('.cart .list').html(renderListCart(response));
 
                             }
@@ -146,6 +232,7 @@
                        
                         break; 
                     case '#products':
+                        
                         // Show the products page
                         $('.products').show();
                         // Load the cart products from the server
@@ -163,7 +250,6 @@
                     case '#product/'+ id + '/edit':
                         // Show the product-edit page
                         $('.products-edit').show();
-                      
                         $.ajax('product/'+ id + '/edit', {
                         dataType: 'json',
                         success: function (response) {
@@ -172,20 +258,44 @@
                         }).done(()=>{
                             actionEditRecord();
                         });
+
                         break;
                     case '#product/create':
-                           // Show the product-create page
+                        // Show the product-create page
                         $('.products-create').show();    
                         $.ajax('product/create', {
-                        dataType: 'json',
-                        success: function (response) { 
-                        }
+                            dataType: 'json',
+                            success: function (response) { 
+                            }
                         }).done(()=>{
                             actionAddRecord();
                         });
                       
                         break;
-                    
+                    case '#orders':
+                        // Show the order page
+                        $('.orders').show();   
+                          
+                        $.ajax('orders', {
+                            dataType: 'json',
+                            success: function (response) { 
+                                // Render the orders 
+                                $('.checkout-box').html(renderListOrders(response));
+                            }
+                        })
+                        break;    
+                    case '#order/'+ id:
+                        // Show the order page
+                   
+                        $('.order').show();  
+                        $.ajax('orders_products/'+id, {
+                            dataType: 'json',
+                            success: function (response) { 
+                                // Render the orders 
+                                $('.full-section').html(renderListOrder(response[0]));
+                            }
+                        })
+                        break;
                     default:
                         // Show the index page
                         $('.index').show();
@@ -203,33 +313,29 @@
                 }
             }
             function actionEditRecord() {
-                $(".ajaxedit").on('submit', function(event) {
+                $(".ajaxedit").off('submit').on('submit', function(event) {
                     event.preventDefault();
                  
                     var id = $(this).serializeArray()[2].value;
                   
                     var formData = new FormData($('.ajaxedit')[0]);
-                    formData.append('csrfmiddlewaretoken', '{{ csrf_token() }}');
-
+             
                     $.ajax('product/'+ id, {
                         dataType: 'json',
-                        type: 'PUT',
+                        type: 'POST',
                         data: formData,
                         processData: false,
                         contentType: false,
-                        success: function (response) {
-                          
+                        success: function (response) {  
                         }
                     })
-                    
                 });
             }
-            function actionAddRecord() {
-                $(".ajaxadd").on('submit', function(event) {
-                    event.preventDefault();
-                   
-                    var formData = new FormData($('.ajaxadd')[0]);
 
+            function actionAddRecord() {
+                $(".ajaxadd").off('submit').on('submit', function(event) {
+                    event.preventDefault();
+                    var formData = new FormData($('.ajaxadd')[0]);
                     $.ajax('product', {
                         dataType: 'json',
                         type: 'POST',
@@ -238,11 +344,9 @@
                         contentType: false,
                         success: function (response) {}
                     })
-                    
                 });
             }
 
-            
             function actionDeleteRecord() {
                 $('.ajaxdelete').on('submit', function(event) {
                     event.preventDefault();
@@ -265,7 +369,6 @@
                 })
             }
             
-
             function actionAddRemove(type) {
                 switch (type) {
                     case 'index':
@@ -344,17 +447,17 @@
             }
          
             if (window.location.hash == "#login") {
-                $(".ajaxlogin").on('submit', function(event) {
+                $(".ajaxlogin").off('submit').on('submit', function(event) {
                     event.preventDefault();
+
+                    var formData = new FormData( $(".ajaxlogin")[0])
 
                     $.ajax('login', {
                         dataType: 'json',
                         type: "POST",
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "email": $(this).serializeArray()[1].value,
-                            "password": $(this).serializeArray()[2].value,
-                        },
+                        data: formData,
+                        processData: false,
+                        contentType: false,
                         success: function (response) {
                             window.location.hash = 'products';
                         }
@@ -366,7 +469,7 @@
             }
                
             if (window.location.hash == "#products") {       
-                $("#logout-form").on('submit', function(event) {
+                $("#logout-form").off('submit').on('submit', function(event) {
                     event.preventDefault();
                         
                     $.ajax('logout', {
@@ -376,6 +479,7 @@
                             "_token": "{{ csrf_token() }}",
                         },
                         success: function (response) {
+                            
                             window.location.hash = 'login';
                         }
                     })
@@ -394,7 +498,7 @@
             <table class="list"></table>
                
             <!-- A link to go to the cart by changing the hash -->
-            <a href="#cart" class="button">Go to cart</a>
+            <a href="#cart" class="button">{{ __('Go to cart') }}</a>
         </div>
        
         <!-- The cart page -->
@@ -457,6 +561,7 @@
             </div>
         </div>
 
+       
          <!-- The products page -->
          <div class="page products">
             <table class="list"></table>
@@ -484,10 +589,11 @@
                 <input class="item-i" type="text" name="price" id="priceEdit" placeholder="Price" value="{{ old('price') }}"><br>
                 <input class="item-j" type="text" name="image" id="imageEdit" placeholder="Image" value="{{ old('image') }}">
                 <input class="item-j" type="file" name="file"><br>
-                <a class="item-j-y" href="#products">Products</a>
-                <button class="item-j-y" type="submit" name="submit">Save</button>
+                <a class="item-j-y" href="#products">{{ __('Products') }}</a>
+                <button class="item-j-y" type="submit" name="submit">{{ __('Save') }}</button>
             </form>  
         </div> 
+
         <!-- The create page -->
         <div class="page products-create">
             <form enctype="multipart/form-data"  class="ajaxadd myProductFrom">
@@ -497,9 +603,21 @@
                 <input class="item-i" type="text" name="price"  placeholder="Price" value="{{ old('price') }}"><br>
                 <input class="item-j" type="text" name="image"  placeholder="Image" value="{{ old('image') }}">
                 <input class="item-j" type="file" name="file"><br>
-                <a class="item-j-y" href="#products">Products</a>
-                <button class="item-j-y" type="submit" name="submit">Save</button>
+                <a class="item-j-y" href="#products">{{ __('Products') }}</a>
+                <button class="item-j-y" type="submit" name="submit">{{ __('Save') }}</button>
             </form>      
         </div> 
+
+        <!-- The orders page -->
+        <div class="page orders">
+            <ul class="checkout-box"></ul>
+        </div>
+
+         <!-- The order page -->
+         <div class="page order">
+            <div class="full-section"></div>
+            <a href="#orders">{{ __('Back') }}</a>
+        </div>
+
     </body>
 </html

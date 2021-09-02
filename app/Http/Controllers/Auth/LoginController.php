@@ -27,7 +27,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/products';
+    // protected $redirectTo = '/products';
 
     /**
      * Create a new controller instance.
@@ -37,10 +37,11 @@ class LoginController extends Controller
     public function __construct(Request $request)
     {
         if ($request->ajax()) {
-            return response()->json([], 204);
+            return response()->json(['msg'=>'connected']);
         }
         
         $this->middleware('guest')->except('logout');
+        
     }
     public function logout()
     {

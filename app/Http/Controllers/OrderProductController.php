@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Order;
+use Illuminate\Http\Request;
 
 class OrderProductController extends Controller
 {
@@ -11,12 +12,16 @@ class OrderProductController extends Controller
         $this->middleware('auth');
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         //products info
         $orderProductInfo = Order::with('product')->where('id', $id)->get();
         //checkout details
         $orderDetails = Order::find($id);
+
+        if($request->ajax()){
+            return response()->json($orderProductInfo);
+        }
 
         if (is_null($orderDetails)) {
             $info = Order::with('orderProduct')->get();

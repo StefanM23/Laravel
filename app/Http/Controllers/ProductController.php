@@ -53,7 +53,6 @@ class ProductController extends Controller
         ]);
 
         
-        
         if ($request->ajax()) {
             return response()->json([], 204);
         }
