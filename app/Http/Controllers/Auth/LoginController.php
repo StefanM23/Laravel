@@ -36,16 +36,15 @@ class LoginController extends Controller
      */
     public function __construct(Request $request)
     {
+        $this->middleware('guest')->except('logout');   
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
         if ($request->ajax()) {
             return response()->json([], 204);
         }
-        
-        $this->middleware('guest')->except('logout');
-        
-    }
-    public function logout()
-    {
-        Auth::logout();
         return redirect('/login');
     }
 }

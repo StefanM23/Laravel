@@ -9,13 +9,33 @@
     <link href="{{ asset('css/index.css') }}" rel="stylesheet">
     <!-- Custom JS script -->
     <script type="text/javascript"> 
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
             }
-        });
+            return "";
+        }
+
+        var xsrf_token = getCookie('XSRF-TOKEN');
         
+        // $.ajaxSetup({
+        //     headers: {
+        //         'X-XSRF-TOKEN': xsrf_token
+        //     }
+        // });
+
+      
+        console.log(xsrf_token)
         //request for translate /to take JSON file with translation
         var fr;
         $.ajax({
@@ -244,60 +264,73 @@
                                 }
                             }).done(() => {
                                 actionDeleteRecord();
-                            });;
+                            });
                         } else {
                             window.location.hash = 'login';
                         }    
 
                         break; 
                     case '#product/'+ id + '/edit':
-                        // Show the product-edit page
-                        $('.products-edit').show();
-                        $.ajax('product/'+ id + '/edit', {
-                        dataType: 'json',
-                        success: function (response) {
-                            $('.products-edit').html(renderListProductsEdit(response));
-                        }
-                        }).done(()=>{
-                            actionEditRecord();
-                        });
-
+                        if ($('body').hasClass('onOff')) {
+                            // Show the product-edit page
+                            $('.products-edit').show();
+                            $.ajax('product/'+ id + '/edit', {
+                            dataType: 'json',
+                            success: function (response) {
+                                $('.products-edit').html(renderListProductsEdit(response));
+                            }
+                            }).done(()=>{
+                                actionEditRecord();
+                            });
+                        } else {
+                            window.location.hash = 'login';
+                        }   
                         break;
                     case '#product/create':
-                        // Show the product-create page
-                        $('.products-create').show();    
-                        $.ajax('product/create', {
-                            dataType: 'json',
-                            success: function (response) { 
-                            }
-                        }).done(()=>{
-                            actionAddRecord();
-                        });
-                      
+                        if ($('body').hasClass('onOff')) {
+                            // Show the product-create page
+                            $('.products-create').show();    
+                            $.ajax('product/create', {
+                                dataType: 'json',
+                                success: function (response) { 
+                                }
+                            }).done(()=>{
+                                actionAddRecord();
+                            });
+                        } else {
+                            window.location.hash = 'login';
+                        }  
                         break;
                     case '#orders':
-                        // Show the order page
-                        $('.orders').show();   
-                          
-                        $.ajax('orders', {
-                            dataType: 'json',
-                            success: function (response) { 
-                                // Render the orders 
-                                $('.checkout-box').html(renderListOrders(response));
-                            }
-                        })
+                        if ($('body').hasClass('onOff')) {
+                            // Show the order page
+                            $('.orders').show();   
+                            
+                            $.ajax('orders', {
+                                dataType: 'json',
+                                success: function (response) { 
+                                    // Render the orders 
+                                    $('.checkout-box').html(renderListOrders(response));
+                                }
+                            })
+                        } else {
+                            window.location.hash = 'login';
+                        }  
                         break;    
                     case '#order/'+ id:
-                        // Show the order page
-                   
-                        $('.order').show();  
-                        $.ajax('orders_products/' + id, {
-                            dataType: 'json',
-                            success: function (response) { 
-                                // Render the orders 
-                                $('.full-section').html(renderListOrder(response[0]));
-                            }
-                        })
+                        if ($('body').hasClass('onOff')) {
+                            // Show the order page
+                            $('.order').show();  
+                            $.ajax('orders_products/' + id, {
+                                dataType: 'json',
+                                success: function (response) { 
+                                    // Render the orders 
+                                    $('.full-section').html(renderListOrder(response[0]));
+                                }
+                            })
+                        } else {
+                            window.location.hash = 'login';
+                        }   
                         break;
                     default:
                         // Show the index page
@@ -450,9 +483,8 @@
             if (window.location.hash == "#login" && !$('body').hasClass('onOff')) {
                 $(".ajaxlogin").off('submit').on('submit', function(event) {
                     event.preventDefault();
-
                     var formData = new FormData($(".ajaxlogin")[0]);
-
+                    
                     $.ajax('login', {
                         dataType: 'json',
                         type: "POST",
@@ -468,24 +500,24 @@
                 });
             }
                
-            if (window.location.hash == "#products" && $('body').hasClass('onOff')) {       
-                $("#logout-form").off('submit').on('submit', function(event) {
-                    event.preventDefault();
-                    var formData = new FormData($(".ajaxlogout")[0]);
-                    console.log('da');
-                    $.ajax('logout', {
-                        dataType: 'json',
-                        type: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (response) {}
-                    }).done(()=>{
+                
+            $("#logout").on('click', function(event) {
+                 event.preventDefault();
+               
+                $.ajax('logout', {
+                    dataType: 'json',
+                    type: "POST",
+                    data: {
+                        "_token": xsrf_token,
+                    },
+                    success: function (response) {
+                    }
+                }).done(()=>{
                         $('body').removeClass('onOff')
                         window.location.hash = 'login';
                     })
                 });
-            } 
+           
                   
             window.onhashchange();
         });
@@ -570,13 +602,10 @@
             <div class="cart-section-products">
                 <a href="#product/create" name='add'>{{ __('Add') }}</a>
             </div>
-
-            <form id="logout-form" class="ajaxlogout">
-                @csrf
-                <button type="submit"  class="btn btn-primary login login-button">
-                    {{ __('Logout') }}
-                </button>
-            </form>
+            <div class="cart-section-products">
+                <input name="csrfToken" value="{{ csrf_token() }}" type="hidden">   
+                <a href="#products" name='logout' id="logout">{{ __('Logout') }}</a>
+            </div>
         </div>  
 
         <!-- The edit page -->
