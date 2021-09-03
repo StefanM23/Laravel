@@ -37,7 +37,7 @@ class LoginController extends Controller
     public function __construct(Request $request)
     {
         if ($request->ajax()) {
-            return response()->json(['msg'=>'connected']);
+            return response()->json([], 204);
         }
         
         $this->middleware('guest')->except('logout');

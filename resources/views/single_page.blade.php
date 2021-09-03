@@ -34,9 +34,7 @@
             }
             return text;
         }
-
-        //loggin var
-        var isLoggedIn = false;
+     
         $(document).ready(function () {
             //function for render index page
             function renderListIndex(products) {
@@ -130,7 +128,6 @@
                 $('#descriptionEdit').attr('value', product.description);
                 $('#priceEdit').attr('value', product.price);
                 $('#imageEdit').attr('value', product.image);
-             
             }
 
            
@@ -226,25 +223,31 @@
 
                         break;
                     case '#login':
-
-                        // Show the login page
-                        $('.login').show();
-                       
+                        if (!$('body').hasClass('onOff')) {
+                            // Show the login page
+                            $('.login').show();
+                        } else {
+                            window.location.hash = 'products';
+                        }
+                        
                         break; 
                     case '#products':
-                        
-                        // Show the products page
-                        $('.products').show();
-                        // Load the cart products from the server
-                        $.ajax('products', {
-                            dataType: 'json',
-                            success: function (response) {
-                                // Render the products in the cart list
-                                $('.products .list').html(renderListProducts(response));
-                            }
-                        }).done(() => {
-                            actionDeleteRecord();
-                        });;
+                        if ($('body').hasClass('onOff')) {
+                            // Show the products page
+                            $('.products').show();
+                            // Load the cart products from the server
+                            $.ajax('products', {
+                                dataType: 'json',
+                                success: function (response) {
+                                    // Render the products in the cart list
+                                    $('.products .list').html(renderListProducts(response));
+                                }
+                            }).done(() => {
+                                actionDeleteRecord();
+                            });;
+                        } else {
+                            window.location.hash = 'login';
+                        }    
 
                         break; 
                     case '#product/'+ id + '/edit':
@@ -288,7 +291,7 @@
                         // Show the order page
                    
                         $('.order').show();  
-                        $.ajax('orders_products/'+id, {
+                        $.ajax('orders_products/' + id, {
                             dataType: 'json',
                             success: function (response) { 
                                 // Render the orders 
@@ -440,17 +443,15 @@
                         success: function (response) {
                             $(".checkout-data").removeClass('disabled').text('Ckeckout');
                         }
-                    }).done(() => {
-                        console.log('Checkout');
-                    }); 
+                    })
                 });
             }
-         
-            if (window.location.hash == "#login") {
+       
+            if (window.location.hash == "#login" && !$('body').hasClass('onOff')) {
                 $(".ajaxlogin").off('submit').on('submit', function(event) {
                     event.preventDefault();
 
-                    var formData = new FormData( $(".ajaxlogin")[0])
+                    var formData = new FormData($(".ajaxlogin")[0]);
 
                     $.ajax('login', {
                         dataType: 'json',
@@ -459,29 +460,29 @@
                         processData: false,
                         contentType: false,
                         success: function (response) {
-                            window.location.hash = 'products';
                         }
                     }).done(() => {
-                        console.log('Login');
+                        $('body').addClass('onOff')
+                        window.location.hash = 'products';
                     });
-
                 });
             }
                
-            if (window.location.hash == "#products") {       
+            if (window.location.hash == "#products" && $('body').hasClass('onOff')) {       
                 $("#logout-form").off('submit').on('submit', function(event) {
                     event.preventDefault();
-                        
+                    var formData = new FormData($(".ajaxlogout")[0]);
+                    console.log('da');
                     $.ajax('logout', {
                         dataType: 'json',
                         type: "POST",
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                        },
-                        success: function (response) {
-                            
-                            window.location.hash = 'login';
-                        }
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {}
+                    }).done(()=>{
+                        $('body').removeClass('onOff')
+                        window.location.hash = 'login';
                     })
                 });
             } 
@@ -570,11 +571,11 @@
                 <a href="#product/create" name='add'>{{ __('Add') }}</a>
             </div>
 
-            <div class="cart-section-products">
-                <a href="#login" name="logout" id="logout">{{ __('Logout') }}</a>
-            </div>
-            <form id="logout-form"  class="ajaxlogout" style="display: none;">
+            <form id="logout-form" class="ajaxlogout">
                 @csrf
+                <button type="submit"  class="btn btn-primary login login-button">
+                    {{ __('Logout') }}
+                </button>
             </form>
         </div>  
 

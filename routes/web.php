@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Auth\LoginController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,6 +29,7 @@ Route::post('cart', 'CartController@store');
 Route::delete('cart/{cartID}', 'CartController@destroy');
 
 Auth::routes();
+Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('products', 'ProductsController@index')->name('products.index');
 
