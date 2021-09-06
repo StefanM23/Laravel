@@ -45,3 +45,10 @@ Route::get('orders_products/{orderId}', 'OrderProductController@show')->name('or
 
 Route::get('tag/{id}', 'TagController@show')->name('tag.show');
 Route::post('tag', 'TagController@store')->name('tag');
+
+Route::get('view-product/{id}', 'ProductViewController@show')->name('view-product.show');
+Route::post('view-product', 'ProductViewController@store')->name('view-product.store');
+
+Route::get('comment', 'CommentController@index')->name('comment.index');
+Route::put('comment/{id}', 'CommentController@update')->name('comment.update');
+Route::delete('comment/{id}', 'CommentController@destroy')->name('comment.destroy');

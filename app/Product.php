@@ -19,6 +19,10 @@ class Product extends Model
     {
         return $this->hasMany(OrderProduct::class);
     }
+    public function comment()
+    {
+        return $this->hasMany(comment::class);
+    }
 
     public function tags()
     {

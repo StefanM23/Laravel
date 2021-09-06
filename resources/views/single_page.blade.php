@@ -28,7 +28,13 @@
 
         var xsrf_token = getCookie('XSRF-TOKEN');
       
-     
+        $.ajaxPrefilter(function(options) {
+            if (!options.beforeSend) {
+                options.beforeSend = function (xhr) { 
+                    xhr.setRequestHeader('X-XSRF-TOKEN', getCookie('XSRF-TOKEN'));
+                }
+            }
+        });
         //request for translate /to take JSON file with translation
         var fr;
         $.ajax({
@@ -49,7 +55,7 @@
         }
      
         $(document).ready(function () {
-            //function for render index page
+          
             function renderListIndex(products) {
                 html = [
                         '<tr>',
@@ -57,6 +63,7 @@
                             '<th>'+ __('Title') + '</th>',
                             '<th>'+ __('Description') + '</th>',
                             '<th>'+ __('Price') + '</th>',
+                            '<th></th>',
                             '<th></th>',
                         '</tr>',
 
@@ -68,7 +75,8 @@
                             '<td><img src="image/' + product.image + '" alt="'+ __('image') + '"></td>', 
                             '<td>' + product.title + '</td>',                       
                             '<td>' + product.description + '</td>',                       
-                            '<td>' + product.price + '</td>',     
+                            '<td>' + product.price + '</td>',  
+                            '<td><a href="#view-product/'+ product.id +'" class="button">'+ __('View') +'</a></td>',   
                             '<td><form class="ajaxadd">@csrf<button type="submit" class="add-data">'+ __('Add') + '</button><input type="hidden" name="id" value="' + product.id + '"></form></td>',                  
                         '</tr>'
                     ].join('');
@@ -77,7 +85,6 @@
                 return html;
             }
 
-            //function for render a part from cart page
             function renderListCart(products) {
                 html = [
                         '<tr>',
@@ -142,8 +149,7 @@
                 $('#priceEdit').attr('value', product.price);
                 $('#imageEdit').attr('value', product.image);
             }
-
-           
+  
             function renderListOrders(products) {
                 var html = [];
                 $.each(products, function (key, product) {
@@ -208,6 +214,72 @@
                 return html;
             }
 
+            function renderProductDetail(product) {
+                
+                html = [
+                        '<div class="container-product">',                           
+                            '<div class="container-image">',
+                                '<img src="image/'+ product.image +'" alt="'+ __('image') +'">',
+                            '</div>', 
+                            '<div class="container-description">',   
+                                '<div>'+ __('Title') +': '+ product.title +'</div>',
+                                '<div>'+ __('Description') +': '+ product.description +'</div>',
+                                '<div>'+ __('Price') +':  '+ product.price +'$</div>',  
+                                '<div><a href="#">'+__('Back')+'</a></div>',
+                            '</div>',
+                        '</div>',
+                        '<div class="container-body">',
+                            '<form class="ajax-product-view">',
+                                '<div class="container-comment">',
+                                    '<textarea name="comment" placeholder="'+__('You can leave a comment about the product')+'" style="resize: none;" cols="30" rows="5"></textarea><br>',
+                                    '<input type="hidden" name="id" value="' + product.id + '">',
+                                    '<button type="submit" name="send">'+ __('Send') +'</button>',
+                                '</div>',
+                            '</form>',
+                        '</div>', 
+                        '-------------------'+ __('List of comments') +'------------------',                  
+                ].join('');
+                
+                var i = 0;
+                $.each(product.comment, function (key, comment) {
+                    if(comment.accepted == true) {
+                        i++;
+                        html += [
+                                '<div class="container-body">',
+                                    '<p>'+ i+' )  '+comment.comment +'</p>',
+                                '</div>',
+                            ].join('');
+                    }
+                });
+                return html; 
+            }
+                
+            function renderListComment(comments) {
+                var html = [];
+                $.each(comments, function (key, comment) {
+                    html+= [
+                        '<div class="container-comments">',
+                            '<div class="container-comments-body">', 
+                                '<p>'+ comment.comment +'</p>', 
+                            '</div>',                      
+                            '<div class="container-comments-aprove">',                       
+                                '<form class="aprove-comment">@csrf',
+                                    '<input type="hidden" name="id" value="' + comment.id + '">',
+                                    '<button type="submite" name="add">'+ __('Add') +'</button>',
+                                '</form>',  
+                            '</div>',          
+                            '<div class="container-comments-delete">@csrf',                       
+                                '<form class="delete-comment">',
+                                    '<input type="hidden" name="id" value="' + comment.id + '">',
+                                    '<button type="submite" name="delete">'+ __('Delete') +'</button>',
+                                '</form>',  
+                            '</div>',                      
+                        '</div>'                        
+                    ].join('');
+                });
+                return html;
+            }     
+            
             window.onhashchange = function () {
 
                 // First hide all the pages
@@ -226,9 +298,7 @@
                             dataType: 'json',
                             success: function (response) {
                                 // Render the products in the cart list
-                              
                                 $('.cart .list').html(renderListCart(response));
-
                             }
                         }).done(()=>{
                             actionAddRemove('cart');
@@ -296,7 +366,7 @@
                         break;
                     case '#orders':
                         if ($('body').hasClass('onOff')) {
-                            // Show the order page
+                            // Show the orders page
                             $('.orders').show();   
                             
                             $.ajax('orders', {
@@ -325,6 +395,37 @@
                             window.location.hash = 'login';
                         }   
                         break;
+                    case '#view-product/'+ id:
+                         // Show the view-product page
+                        $('.view-product').show();
+                        $.ajax('view-product/' + id, {
+                            dataType: 'json',
+                            success: function (response) { 
+                                // Render the product detail 
+                                $('.view-product .container').html(renderProductDetail(response[0]));
+                            }
+                        }).done(()=>{
+                            actionAddComment();
+                        })
+                        break;
+                    case '#list-comment':
+                        if ($('body').hasClass('onOff')) {
+                            // Show the list-comment page
+                            $('.list-comment').show();
+                        
+                            $.ajax('comment', {
+                                dataType: 'json',
+                                success: function (response) {
+                                    // Render the comments
+                                    $('.list-comment .container').html(renderListComment(response));
+                                }
+                            }).done(() => {
+                                actionAddDeleteComment();
+                            });
+                        }else {
+                            window.location.hash = 'login';
+                        }
+                        break;    
                     default:
                         // Show the index page
                         $('.index').show();
@@ -341,20 +442,67 @@
                         break;
                 }
             }
+
+            function actionAddDeleteComment(){
+                $('.aprove-comment').off('submit').on('submit', function(event){
+                    event.preventDefault();
+
+                    var id = $(this).serializeArray()[1].value;
+
+                    $.ajax('comment/'+ id, {
+                        dataType: 'json',
+                        type: 'PUT',
+                        data: {
+                            'id': id,
+                        },
+                        success: function (response) {  
+                        }
+                    })
+                })
+                $('.delete-comment').off('submit').on('submit', function(event){
+                    event.preventDefault();
+                   
+                    var id = $(this).serializeArray()[0].value;
+                    
+                    $.ajax('comment/'+ id, {
+                        dataType: 'json',
+                        type: 'DELETE',
+                        data: {
+                            'id': id,
+                        },
+                        success: function (response) {
+                            $(event.target).parents('.container-comments').remove()
+                        }
+                    })
+                })
+            }
+
+            function actionAddComment(){  
+                $(".ajax-product-view").off('submit').on('submit', function(event){
+                    event.preventDefault();
+                    $.ajax('view-product', {
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {
+                            'comment': $(this).serializeArray()[0].value,
+                            'id': $(this).serializeArray()[1].value,
+                        },
+                        success: function (response) {}
+                    })
+                })  
+            }
+
             function actionEditRecord() {
                 $(".ajaxedit").off('submit').on('submit', function(event) {
                     event.preventDefault();
-                 
+                    
                     var id = $(this).serializeArray()[2].value;
-                    xsrf_token = getCookie('XSRF-TOKEN');
                     var formData = new FormData($('.ajaxedit')[0]);
                     formData.delete('_token');
+
                     $.ajax('product/'+ id, {
                         dataType: 'json',
                         type: 'POST',
-                        headers:{
-                            'X-XSRF-TOKEN': xsrf_token,
-                        },
                         data: formData,
                         processData: false,
                         contentType: false,
@@ -367,15 +515,12 @@
             function actionAddRecord() {
                 $(".ajaxadd").off('submit').on('submit', function(event) {
                     event.preventDefault();
-                    xsrf_token = getCookie('XSRF-TOKEN');
+           
                     var formData = new FormData($('.ajaxadd')[0]);
                     formData.delete('_token');
                     $.ajax('product', {
                         dataType: 'json',
                         type: 'POST',
-                        headers:{
-                            'X-XSRF-TOKEN': xsrf_token,
-                        },
                         data: formData,
                         processData: false,
                         contentType: false,
@@ -387,22 +532,14 @@
             function actionDeleteRecord() {
                 $('.ajaxdelete').on('submit', function(event) {
                     event.preventDefault();
-                    xsrf_token = getCookie('XSRF-TOKEN');
                     var id = $(this).serializeArray()[1].value;
                     $.ajax('products/'+ id, {
                         dataType: 'json',
                         type: 'DELETE',
-                        headers:{
-                            'X-XSRF-TOKEN': xsrf_token,
-                        },
                         data: {
                             "id": id,
                         },
-                        beforeSend:function(){
-                            $(".delete-data").addClass('disabled').text('Loading...');
-                        },
                         success: function (response) {
-                            $(".delete-data").removeClass('disabled').text('Remove');
                             $(event.target).parents('tr').remove(); 
                         }
                     });
@@ -414,53 +551,33 @@
                     case 'index':
                         $(".ajaxadd").on('submit', function(event) {
                             event.preventDefault();
-                            xsrf_token = getCookie('XSRF-TOKEN');
                             $.ajax('index', {
                                 dataType: 'json',
                                 type: "POST",
-                                headers:{
-                                    'X-XSRF-TOKEN': xsrf_token,
-                                },
                                 data: {
                                     "id": $(this).serializeArray()[1].value,
                                 },
-                                beforeSend:function(){
-                                    $(".add-data").addClass('disabled').text('Loading...');
-                                },
                                 success: function (response) {
-                                    $(".add-data").removeClass('disabled').text('Add');
                                     $(event.target).parents('tr').remove(); 
                                 }
-                            }).done(() => {
-                                 console.log('Remove');
-                            });
+                            })
                         });
                       
                         break;    
                     case 'cart':
                         $(".ajaxremove").on('submit', function(event) {
                             event.preventDefault();
-                            xsrf_token = getCookie('XSRF-TOKEN');
                             var id = $(this).serializeArray()[1].value;
                             $.ajax('cart/'+ id, {
                                 dataType: 'json',
                                 type: "DELETE",
-                                headers:{
-                                    'X-XSRF-TOKEN': xsrf_token,
-                                },
                                 data: {
                                     'id': id,
                                 },
-                                beforeSend:function(){
-                                    $(".delete-data").addClass('disabled').text('Loading...');
-                                },
                                 success: function (response) {
-                                    $(".delete-data").removeClass('disabled').text('Remove');
                                     $(event.target).parents('tr').remove();
                                 }
-                            }).done(() => {
-                                 console.log('DELETE');
-                            });
+                            })
                         }); 
                       
                     break;
@@ -490,17 +607,12 @@
                 });
             }
        
-            
             $(".ajaxlogin").off('submit').on('submit', function(event) {
                 event.preventDefault();
-                xsrf_token = getCookie('XSRF-TOKEN');
-           
+               
                 $.ajax('login', {
                     dataType: 'json',
                     type: "POST",
-                    headers:{
-                        'X-XSRF-TOKEN': xsrf_token,
-                    },
                     data: {
                         'email': $(this).serializeArray()[1].value,
                         'password': $(this).serializeArray()[2].value,
@@ -516,22 +628,17 @@
                 
             $("#logout").on('click', function(event) {
                 event.preventDefault();
-                xsrf_token = getCookie('XSRF-TOKEN');
                 $.ajax('logout', {
                     dataType: 'json',
                     type: "POST",
-                    headers:{
-                        'X-XSRF-TOKEN': xsrf_token,
-                    },
                     success: function (response) {
                     }
                 }).done(()=>{
-                        $('body').removeClass('onOff')
-                        window.location.hash = 'login';
-                    })
-                });
-           
-                  
+                    $('body').removeClass('onOff')
+                    window.location.hash = 'login';
+                })
+            });
+              
             window.onhashchange();
         });
     </script>
@@ -542,11 +649,18 @@
             <!-- The index element where the products list is rendered -->
                
             <table class="list"></table>
-               
+
+          
             <!-- A link to go to the cart by changing the hash -->
             <a href="#cart" class="button">{{ __('Go to cart') }}</a>
         </div>
-       
+         {{-- The of view-product --}}
+        <div class="page view-product">
+            <div class="container">
+                
+            </div>
+        </div>
+
         <!-- The cart page -->
         <div class="page cart">
             <!-- The cart element where the products list is rendered -->
@@ -606,12 +720,14 @@
                 </form>
             </div>
         </div>
-
-       
+  
          <!-- The products page -->
          <div class="page products">
             <table class="list"></table>
 
+            <div class="cart-section-products">
+                <a href="#list-comment" name='comments'>{{ __('Comments') }}</a>
+            </div>
             <div class="cart-section-products">
                 <a href="#product/create" name='add'>{{ __('Add') }}</a>
             </div>
@@ -620,6 +736,17 @@
                 <a href="#products" name='logout' id="logout">{{ __('Logout') }}</a>
             </div>
         </div>  
+
+        {{-- The of list-comment --}}
+        <div class="page list-comment">
+            <div class="container-title">
+                <center><h1>{{ __('List of comments') }}</h1></center>
+            </div>
+            <div class="container">
+
+            </div>
+            <center><a href="#products">{{ __('Products') }}</a></center>
+        </div>
 
         <!-- The edit page -->
         <div class="page products-edit">
