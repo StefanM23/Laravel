@@ -27,15 +27,8 @@
         }
 
         var xsrf_token = getCookie('XSRF-TOKEN');
-        
-        // $.ajaxSetup({
-        //     headers: {
-        //         'X-XSRF-TOKEN': xsrf_token
-        //     }
-        // });
-
       
-        console.log(xsrf_token)
+     
         //request for translate /to take JSON file with translation
         var fr;
         $.ajax({
@@ -353,12 +346,15 @@
                     event.preventDefault();
                  
                     var id = $(this).serializeArray()[2].value;
-                  
+                    xsrf_token = getCookie('XSRF-TOKEN');
                     var formData = new FormData($('.ajaxedit')[0]);
-             
+                    formData.delete('_token');
                     $.ajax('product/'+ id, {
                         dataType: 'json',
                         type: 'POST',
+                        headers:{
+                            'X-XSRF-TOKEN': xsrf_token,
+                        },
                         data: formData,
                         processData: false,
                         contentType: false,
@@ -371,10 +367,15 @@
             function actionAddRecord() {
                 $(".ajaxadd").off('submit').on('submit', function(event) {
                     event.preventDefault();
+                    xsrf_token = getCookie('XSRF-TOKEN');
                     var formData = new FormData($('.ajaxadd')[0]);
+                    formData.delete('_token');
                     $.ajax('product', {
                         dataType: 'json',
                         type: 'POST',
+                        headers:{
+                            'X-XSRF-TOKEN': xsrf_token,
+                        },
                         data: formData,
                         processData: false,
                         contentType: false,
@@ -386,12 +387,15 @@
             function actionDeleteRecord() {
                 $('.ajaxdelete').on('submit', function(event) {
                     event.preventDefault();
+                    xsrf_token = getCookie('XSRF-TOKEN');
                     var id = $(this).serializeArray()[1].value;
                     $.ajax('products/'+ id, {
                         dataType: 'json',
                         type: 'DELETE',
+                        headers:{
+                            'X-XSRF-TOKEN': xsrf_token,
+                        },
                         data: {
-                            "_token": "{{ csrf_token() }}",
                             "id": id,
                         },
                         beforeSend:function(){
@@ -410,11 +414,14 @@
                     case 'index':
                         $(".ajaxadd").on('submit', function(event) {
                             event.preventDefault();
+                            xsrf_token = getCookie('XSRF-TOKEN');
                             $.ajax('index', {
                                 dataType: 'json',
                                 type: "POST",
+                                headers:{
+                                    'X-XSRF-TOKEN': xsrf_token,
+                                },
                                 data: {
-                                    "_token": "{{ csrf_token() }}",
                                     "id": $(this).serializeArray()[1].value,
                                 },
                                 beforeSend:function(){
@@ -433,12 +440,15 @@
                     case 'cart':
                         $(".ajaxremove").on('submit', function(event) {
                             event.preventDefault();
+                            xsrf_token = getCookie('XSRF-TOKEN');
                             var id = $(this).serializeArray()[1].value;
                             $.ajax('cart/'+ id, {
                                 dataType: 'json',
                                 type: "DELETE",
+                                headers:{
+                                    'X-XSRF-TOKEN': xsrf_token,
+                                },
                                 data: {
-                                    "_token": "{{ csrf_token() }}",
                                     'id': id,
                                 },
                                 beforeSend:function(){
@@ -480,35 +490,38 @@
                 });
             }
        
-            if (window.location.hash == "#login" && !$('body').hasClass('onOff')) {
-                $(".ajaxlogin").off('submit').on('submit', function(event) {
-                    event.preventDefault();
-                    var formData = new FormData($(".ajaxlogin")[0]);
-                    
-                    $.ajax('login', {
-                        dataType: 'json',
-                        type: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (response) {
-                        }
-                    }).done(() => {
+            
+            $(".ajaxlogin").off('submit').on('submit', function(event) {
+                event.preventDefault();
+                xsrf_token = getCookie('XSRF-TOKEN');
+           
+                $.ajax('login', {
+                    dataType: 'json',
+                    type: "POST",
+                    headers:{
+                        'X-XSRF-TOKEN': xsrf_token,
+                    },
+                    data: {
+                        'email': $(this).serializeArray()[1].value,
+                        'password': $(this).serializeArray()[2].value,
+                    },
+                    success: function (response) {}
+                }).done(() => {
                         $('body').addClass('onOff')
                         window.location.hash = 'products';
                     });
                 });
-            }
+            
                
                 
             $("#logout").on('click', function(event) {
-                 event.preventDefault();
-               
+                event.preventDefault();
+                xsrf_token = getCookie('XSRF-TOKEN');
                 $.ajax('logout', {
                     dataType: 'json',
                     type: "POST",
-                    data: {
-                        "_token": xsrf_token,
+                    headers:{
+                        'X-XSRF-TOKEN': xsrf_token,
                     },
                     success: function (response) {
                     }
