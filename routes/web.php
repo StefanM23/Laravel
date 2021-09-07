@@ -41,3 +41,10 @@ Route::get('orders_products/{orderId}', 'OrderProductController@show')->name('or
 
 Route::get('tag/{id}', 'TagController@show')->name('tag.show');
 Route::post('tag', 'TagController@store')->name('tag');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/{any}', function () {
+    return view('layouts.vue');
+})->where('any', '.*');

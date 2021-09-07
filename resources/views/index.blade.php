@@ -34,4 +34,5 @@
     <div class="cart-section">
         <a href="{{ route('cart.index') }}">{{ __('Go to cart') }}</a>
     </div>
+  
 @endsection

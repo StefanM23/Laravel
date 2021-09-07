@@ -10,6 +10,7 @@ class IndexController extends Controller
     public function index(Request $request)
     {
         $products = $request->session()->has('cart') ? Product::whereNotIn('id', $request->session()->get('cart'))->get() : Product::all();
+        return response()->json($products->toArray());
         return view('index', [
             'products' => $products,
         ]);
