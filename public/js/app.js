@@ -2116,6 +2116,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2126,6 +2132,11 @@ __webpack_require__.r(__webpack_exports__);
         title: '',
         description: '',
         price: ''
+      },
+      cart: {
+        name: '',
+        contacts: '',
+        comments: ''
       }
     };
   },
@@ -2156,6 +2167,13 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (err) {
         return console.log(err);
       });
+    },
+    sendMail: function sendMail(name, contacts, comments) {
+      console.log(cart.name); // axios.post('cart', { 'name': name,'contacts':contacts,'comments':comments })
+      // .then(() => {
+      //     this.fetchProducts();
+      // })
+      // .catch(err => console.log(err))
     }
   }
 });
@@ -6829,7 +6847,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.full-section[data-v-6eedc494]{\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr 1fr;\n    width: 400px;\n}\n.info-section[data-v-6eedc494]{\n    padding: 5px;\n}\n.info-section img[data-v-6eedc494]{\n    width: 120px;\n    height: 120px;\n    padding: 0px;\n}\n.info-section ul[data-v-6eedc494]{\n    list-style-type: none;\n    padding: 0px;\n    margin: 0px;\n    font-size: 3vh;\n}\n.info-section a[data-v-6eedc494]{\n    position: relative;\n\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n.cart-section[data-v-6eedc494]{\n    padding: 0px;\n    width: 400px;\n    text-align: center;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.full-section[data-v-6eedc494]{\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr 1fr;\n    width: 400px;\n}\n.info-section[data-v-6eedc494]{\n    padding: 5px;\n}\n.info-section img[data-v-6eedc494]{\n    width: 120px;\n    height: 120px;\n    padding: 0px;\n}\n.info-section ul[data-v-6eedc494]{\n    list-style-type: none;\n    padding: 0px;\n    margin: 0px;\n    font-size: 3vh;\n}\n.info-section a[data-v-6eedc494]{\n    position: relative;\n\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n.cart-section[data-v-6eedc494]{\n    padding: 0px;\n    width: 400px;\n    text-align: center;\n}\nform[data-v-6eedc494] {\n    width: 400px;\n    padding: 0px;\n}\nform input[data-v-6eedc494]{\n    width: 96%;\n    margin-bottom: 10px;\n    margin-left: 6px;\n}\nform textarea[data-v-6eedc494]{\n    width: 96%;\n    margin-bottom: 10px;\n    margin-left: 6px;\n}\nform a[data-v-6eedc494],form button[data-v-6eedc494]{\n    display: inline-flex;\n    font-size: 20px;\n    position: relative;\n    left: 190px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -38513,42 +38531,92 @@ var render = function() {
       _c(
         "div",
         { staticClass: "main-section" },
-        _vm._l(_vm.products, function(product) {
-          return _c("div", { key: product.id }, [
-            _c("div", { staticClass: "full-section" }, [
-              _c("div", { staticClass: "info-section" }, [
-                _c("img", {
-                  attrs: { src: "./image/" + product.image, alt: "image" }
-                })
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "info-section" }, [
-                _c("ul", [
-                  _c("li", [_vm._v(_vm._s(product.title))]),
-                  _vm._v(" "),
-                  _c("li", [_vm._v(_vm._s(product.description))]),
-                  _vm._v(" "),
-                  _c("li", [_vm._v(_vm._s(product.price))])
-                ])
-              ]),
-              _vm._v(" "),
-              _c(
-                "form",
-                {
-                  staticClass: "formRemove",
-                  on: {
-                    submit: function($event) {
-                      $event.preventDefault()
-                      return _vm.removeProductCart(product.id)
+        [
+          _vm._l(_vm.products, function(product) {
+            return _c("div", { key: product.id }, [
+              _c("div", { staticClass: "full-section" }, [
+                _c("div", { staticClass: "info-section" }, [
+                  _c("img", {
+                    attrs: { src: "./image/" + product.image, alt: "image" }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "info-section" }, [
+                  _c("ul", [
+                    _c("li", [_vm._v(_vm._s(product.title))]),
+                    _vm._v(" "),
+                    _c("li", [_vm._v(_vm._s(product.description))]),
+                    _vm._v(" "),
+                    _c("li", [_vm._v(_vm._s(product.price))])
+                  ])
+                ]),
+                _vm._v(" "),
+                _c(
+                  "form",
+                  {
+                    staticClass: "formRemove",
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.removeProductCart(product.id)
+                      }
                     }
-                  }
-                },
-                [_vm._m(0, true)]
-              )
+                  },
+                  [_vm._m(0, true)]
+                )
+              ])
             ])
-          ])
-        }),
-        0
+          }),
+          _vm._v(" "),
+          _c(
+            "form",
+            {
+              on: {
+                submit: function($event) {
+                  $event.preventDefault()
+                  return _vm.sendMail(
+                    _vm.cart.name,
+                    _vm.cart.contacts,
+                    _vm.cart.comments
+                  )
+                }
+              }
+            },
+            [
+              _c("input", {
+                attrs: { type: "text", name: "name", placeholder: "Name" }
+              }),
+              _c("br"),
+              _vm._v(" "),
+              _c("textarea", {
+                staticStyle: { resize: "none" },
+                attrs: {
+                  name: "contacts",
+                  cols: "30",
+                  rows: "2",
+                  placeholder: "Contact details"
+                }
+              }),
+              _c("br"),
+              _vm._v(" "),
+              _c("textarea", {
+                staticStyle: { resize: "none" },
+                attrs: {
+                  name: "comments",
+                  cols: "30",
+                  rows: "4",
+                  placeholder: "Comments"
+                }
+              }),
+              _c("br"),
+              _vm._v(" "),
+              _c("button", { attrs: { type: "submit", name: "checkout" } }, [
+                _vm._v("Checkout")
+              ])
+            ]
+          )
+        ],
+        2
       ),
       _vm._v(" "),
       _c(

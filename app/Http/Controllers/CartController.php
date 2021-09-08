@@ -27,7 +27,6 @@ class CartController extends Controller
     }
     public function destroy(Request $request)
     {
-        dump($request->id);
         if (isset($request->id)) {
             $idCartProject = $request->id;
             $request->session()->pull('cart.' . $idCartProject);
@@ -51,19 +50,19 @@ class CartController extends Controller
 
             Mail::to($mailTo)->send(new MailSend($request, $productsSession));
 
-            $orderInsert = Order::create([
-                'customer_name' => strip_tags($request->name),
-                'customer_address' => strip_tags($request->contacts),
-                'customer_comment' => strip_tags($request->comments),
-            ]);
-            foreach ($arrayCartIdSession as $productIdFromCart) {
-                $priceElement = Product::find($productIdFromCart);
-                OrderProduct::create([
-                    'order_id' => $orderInsert->id,
-                    'product_id' => $productIdFromCart,
-                    'price' => $priceElement->price,
-                ]);
-            }
+            // $orderInsert = Order::create([
+            //     'customer_name' => strip_tags($request->name),
+            //     'customer_address' => strip_tags($request->contacts),
+            //     'customer_comment' => strip_tags($request->comments),
+            // ]);
+            // foreach ($arrayCartIdSession as $productIdFromCart) {
+            //     $priceElement = Product::find($productIdFromCart);
+            //     OrderProduct::create([
+            //         'order_id' => $orderInsert->id,
+            //         'product_id' => $productIdFromCart,
+            //         'price' => $priceElement->price,
+            //     ]);
+            // }
         }
         return redirect()->route('cart.index');
     }
