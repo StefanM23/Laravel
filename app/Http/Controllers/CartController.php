@@ -19,17 +19,20 @@ class CartController extends Controller
         }
 
         $products = $request->session()->has('cart') ? Product::whereIn('id', $addCartProductId)->get() : Product::whereIn('id', [-1])->get();
-
+        
+        return response()->json($products->toArray());
         return view('cart', [
             'products' => $products,
         ]);
     }
     public function destroy(Request $request)
     {
+        dump($request->id);
         if (isset($request->id)) {
             $idCartProject = $request->id;
             $request->session()->pull('cart.' . $idCartProject);
         }
+        return response()->json([], 204);
         return redirect()->route('cart.index');
     }
     public function store(Request $request)

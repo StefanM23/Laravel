@@ -10,6 +10,7 @@ class IndexController extends Controller
     public function index(Request $request)
     {
         $products = $request->session()->has('cart') ? Product::whereNotIn('id', $request->session()->get('cart'))->get() : Product::all();
+        // $request->session()->flush();
         return response()->json($products->toArray());
         return view('index', [
             'products' => $products,
@@ -22,6 +23,7 @@ class IndexController extends Controller
             $idProduct = $request->id;
             $request->session()->put('cart.' . $idProduct, $idProduct);
         }
+        return response()->json([], 204);
         return redirect('/index');
     }
 }

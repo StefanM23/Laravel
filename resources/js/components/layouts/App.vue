@@ -1,17 +1,5 @@
 <template>
-    <div>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <router-link
-              class="nav-link"
-              :to="{ name: 'productss' }"
-            >
-              Products
-            </router-link>
-          </li>
-
-         
-        </ul>
+    <div>  
         <router-view></router-view>
     </div>
 </template>
