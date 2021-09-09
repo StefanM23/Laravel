@@ -21,10 +21,10 @@
                     </form>
                 </div>
             </div> 
-             <form @submit.prevent="sendMail(cart.name, cart.contacts, cart.comments)">
-                <input type="text" name="name" placeholder="Name" ><br>
-                <textarea name="contacts" style="resize: none;"  cols="30" rows="2" placeholder="Contact details" ></textarea><br>
-                <textarea name="comments" style="resize: none;" cols="30" rows="4" placeholder="Comments" ></textarea><br>
+             <form @submit.prevent="sendMail">
+                <input type="text" v-model="name" name="name" id="name" placeholder="Name" ><br>
+                <textarea v-model="contacts" id="contacts" name="contacts" style="resize: none;"  cols="30" rows="2" placeholder="Contact details" ></textarea><br>
+                <textarea v-model="comments" id="comments" name="comments" style="resize: none;" cols="30" rows="4" placeholder="Comments" ></textarea><br>
                 <button type="submit" name="checkout" >Checkout</button>
             </form>  
         </div>
@@ -43,12 +43,11 @@
                     title: '',
                     description: '',
                     price: '',
+                    
                 },
-                cart : {
-                    name: '',
-                    contacts:'',
-                    comments:'',
-                }
+                name: '',
+                contacts: '',
+                comments: '',  
             }
         },
          created() {
@@ -71,13 +70,12 @@
                 })
                 .catch(err => console.log(err))
             },
-            sendMail(name, contacts, comments){
-                console.log(cart.name);
-                // axios.post('cart', { 'name': name,'contacts':contacts,'comments':comments })
-                // .then(() => {
-                //     this.fetchProducts();
-                // })
-                // .catch(err => console.log(err))
+            sendMail(){
+                axios.post('cart', { 'name': this.name,'contacts':this.contacts,'comments':this.comments })
+                .then(() => {
+                    this.fetchProducts();
+                })
+                .catch(err => console.log(err))
             }
         }
     }

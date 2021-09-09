@@ -20,6 +20,8 @@ require('./bootstrap');
 
 Vue.component('index', require('./components/pages/Index.vue').default);
 Vue.component('cart', require('./components/pages/Cart.vue').default);
+Vue.component('login', require('./components/pages/Login.vue').default);
+Vue.component('products', require('./components/pages/Products.vue').default);
 
 
 const app = new Vue({
